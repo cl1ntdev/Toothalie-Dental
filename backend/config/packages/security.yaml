@@ -1,0 +1,91 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+        # used to reload user from session & other features (e.g. switch_user)
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+        login:
+            provider: app_user_provider
+            pattern: ^/api/login-auth
+            stateless: true
+            json_login:
+                check_path: /api/login-auth
+                username_path: username
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+            logout:
+                path: /api/logout  # This must match your route
+                # target: null       # Prevents redirect behavior
+                # success_handler: null # Optional: relies on default 200 OK or custom handler
+
+        main:
+            lazy: true
+            # provider: users_in_memory
+            provider: app_user_provider
+            security: false
+
+    # Optional: For web routes if you have a dashboard or front-end route that needs sessions
+    #     main:
+    #         lazy: true
+    #         provider: app_user_provider
+    #         logout: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # # FOR TESTING
+        # - { path: ^/dashboard, roles: ROLE_USER}
+
+        # # public access
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        # - { path: ^/api/login-auth, roles: PUBLIC_ACCESS }
+
+        #  # protected
+        - { path: ^/api/auth/me, roles: [IS_AUTHENTICATED_FULLY] }
+        - { path: ^/api/auth-user-info, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/get-login-user, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        
+        
+        - { path: ^/api/admin, roles: ROLE_ADMIN }
+
+        # - { path: ^/api/get-user-info, roles: ROLE_USER }
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon
