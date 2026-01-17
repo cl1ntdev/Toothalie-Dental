@@ -9,37 +9,60 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ArrayParameterType;
 
-final class GetServices extends AbstractController {
-    #[Route('/api/get-services', methods:['GET'], name:'get-services')]
-    public function getService(Connection $connection){
-
+final class GetServices extends AbstractController
+{
+    #[Route("/api/get-services", methods: ["GET"], name: "get-services")]
+    public function getService(Connection $connection)
+    {
         $data = $connection->fetchAllAssociative(
-            "Select s.id as service_id ,s.name as service_name, s.service_type_id, 
+            "Select s.id as service_id ,s.name as service_name, s.service_type_id,
             se.id as serviceTypeId, se.name as serviceTypeName from service s
             join service_type se on s.service_type_id = se.id
-            "
+            ",
         );
 
         return new JsonResponse([
-            'data' => $data
+            "data" => $data,
         ]);
-        
     }
-    
-    #[Route('/api/get-dentist-service', methods:['POST'], name:'get-dentist-service')]
-    public function getDentistServices(Request $request, Connection $connection){
+
+    #[
+        Route(
+            "/api/get-dentist-service",
+            methods: ["POST"],
+            name: "get-dentist-service",
+        ),
+    ]
+    public function getDentistServices(Request $request, Connection $connection)
+    {
         $user = $this->getUser();
         $userID = $user->getId();
 
         $dentistService = $connection->fetchAllAssociative(
-            'SELECT * from dentist_service where user_id = ?',
-            [$userID]
+            "SELECT * from dentist_service where user_id = ?",
+            [$userID],
         );
 
         return new JsonResponse([
-            'dentistServices' => $dentistService
+            "dentistServices" => $dentistService,
         ]);
-        
     }
-    
+
+    #[
+        Route(
+            "/api/get-appointment-types",
+            methods: ["GET"],
+            name: "get-appointment-types",
+        ),
+    ]
+    public function getAppointmentTypes(Connection $connection)
+    {
+        $data = $connection->fetchAllAssociative(
+            "SELECT * from appointment_type",
+        );
+
+        return new JsonResponse([
+            "data" => $data,
+        ]);
+    }
 }
