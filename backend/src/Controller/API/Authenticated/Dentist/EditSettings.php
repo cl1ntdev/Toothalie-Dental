@@ -90,7 +90,7 @@ class EditSettings extends AbstractController
                 "SELECT id FROM schedule WHERE dentistID = ?",
                 [$dentistID],
             );
-            $existingIDs = array_column($existing, "scheduleID");
+            $existingIDs = array_column($existing, "id");
             $processedIDs = [];
 
             // Process incoming schedules
@@ -154,7 +154,7 @@ class EditSettings extends AbstractController
                         array_fill(0, count($safeToDelete), "?"),
                     );
                     $conn->executeStatement(
-                        "DELETE FROM schedule WHERE scheduleID IN ($placeholdersDelete)",
+                        "DELETE FROM schedule WHERE id IN ($placeholdersDelete)",
                         array_map("intval", $safeToDelete),
                     );
                     $deletedIDs = $safeToDelete;
