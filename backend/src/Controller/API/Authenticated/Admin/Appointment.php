@@ -43,7 +43,7 @@ class Appointment extends AbstractController
                     s.name AS service_name,
                     st.id AS service_type_id,
                     st.name AS service_type_name,
-                    sch.scheduleID AS schedule_id,
+                    sch.id AS schedule_id,
                     sch.day_of_week,
                     sch.time_slot
                 FROM appointment a
@@ -52,12 +52,12 @@ class Appointment extends AbstractController
                 LEFT JOIN appointment_type atype ON a.appointment_type_id = atype.id
                 LEFT JOIN service s ON a.service_id = s.id
                 LEFT JOIN service_type st ON s.service_type_id = st.id
-                LEFT JOIN schedule sch ON a.schedule_id = sch.scheduleID
+                LEFT JOIN schedule sch ON a.schedule_id = sch.id
                 ORDER BY a.appointment_date DESC;
             ');
 
             $rawSchedules = $connection->fetchAllAssociative('
-                SELECT scheduleID, day_of_week, time_slot, dentistID
+                SELECT id, day_of_week, time_slot, dentistID
                 FROM schedule
                 ORDER BY dentistID, day_of_week, time_slot
             ');
@@ -184,11 +184,11 @@ class Appointment extends AbstractController
                 array_filter($insertData, fn($v) => $v !== null),
             );
             $newId = $connection->lastInsertId();
-            
+
             // Log the creation
             $logger->log(
-                'RECORD_CREATED',
-                "Admin created appointment ID {$newId} (Patient: {$insertData['patient_id']}, Dentist: {$insertData['dentist_id']})"
+                "RECORD_CREATED",
+                "Admin created appointment ID {$newId} (Patient: {$insertData["patient_id"]}, Dentist: {$insertData["dentist_id"]})",
             );
 
             return new JsonResponse([
@@ -219,57 +219,70 @@ class Appointment extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
-                $data = json_decode($req->getContent(), true);
-        
-                if (!isset($data['appointmentID'])) {
-                    return new JsonResponse([
-                        "status" => "error",
-                        "message" => "Missing appointment ID",
-                    ], 400);
-                }
-        
-                $appointmentID = (int)$data['appointmentID'];
-        
-                $updateData = [
-                    "patient_id" => isset($data["patient_id"]) ? (int)$data["patient_id"] : null,
-                    "dentist_id" => isset($data["dentist_id"]) ? (int)$data["dentist_id"] : null,
-                    "schedule_id" => isset($data["schedule_id"]) ? (int)$data["schedule_id"] : null,
-                    "emergency" => isset($data["emergency"]) ? (int)$data["emergency"] : null,
-                    "user_set_date" => $data["user_set_date"] ?? null,
-                    "status" => $data["status"] ?? null,
-                    "message" => $data["message"] ?? null,
-                    "service_id" => isset($data["service_id"]) ? (int)$data["service_id"] : null,
-                ];
-        
-                // Remove nulls so only provided fields are updated
-                $updateData = array_filter($updateData, fn($v) => $v !== null);
-        
-                if (empty($updateData)) {
-                    return new JsonResponse([
+            $data = json_decode($req->getContent(), true);
+
+            $appointmentID = (int) $id;
+
+            $updateData = [
+                "patient_id" => isset($data["patient_id"])
+                    ? (int) $data["patient_id"]
+                    : null,
+                "dentist_id" => isset($data["dentist_id"])
+                    ? (int) $data["dentist_id"]
+                    : null,
+                "schedule_id" => isset($data["schedule_id"])
+                    ? (int) $data["schedule_id"]
+                    : null,
+                "emergency" => isset($data["emergency"])
+                    ? (int) $data["emergency"]
+                    : null,
+                "user_set_date" => $data["user_set_date"] ?? null,
+                "status" => $data["status"] ?? null,
+                "message" => $data["message"] ?? null,
+                "service_id" => isset($data["service_id"])
+                    ? (int) $data["service_id"]
+                    : null,
+            ];
+
+            // Remove nulls so only provided fields are updated
+            $updateData = array_filter($updateData, fn($v) => $v !== null);
+
+            if (empty($updateData)) {
+                return new JsonResponse(
+                    [
                         "status" => "error",
                         "message" => "No valid fields to update",
-                    ], 400);
-                }
-        
-                $connection->update("appointment", $updateData, ["id" => $appointmentID]);
-                
-                // Log the update
-                $logger->log(
-                    'RECORD_UPDATED',
-                    "Admin updated appointment ID {$appointmentID} (Fields: " . implode(', ', array_keys($updateData)) . ")"
+                    ],
+                    400,
                 );
-        
-                return new JsonResponse([
-                    "status" => "success",
-                    "message" => "Appointment updated",
-                    "updated" => $updateData,
-                ]);
-            } catch (\Exception $e) {
-                return new JsonResponse([
+            }
+
+            $connection->update("appointment", $updateData, [
+                "id" => $appointmentID,
+            ]);
+
+            // Log the update
+            $logger->log(
+                "RECORD_UPDATED",
+                "Admin updated appointment ID {$appointmentID} (Fields: " .
+                    implode(", ", array_keys($updateData)) .
+                    ")",
+            );
+
+            return new JsonResponse([
+                "status" => "success",
+                "message" => "Appointment updated",
+                "updated" => $updateData,
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
                     "status" => "error",
                     "message" => $e->getMessage(),
-                ], 500);
-            }
+                ],
+                500,
+            );
+        }
     }
 
     #[
@@ -297,13 +310,13 @@ class Appointment extends AbstractController
             }
 
             $connection->delete("appointment", ["id" => $id]);
-            
+
             // Log the deletion
             $logger->log(
-                'RECORD_DELETED',
-                "Admin deleted appointment ID {$id}"
+                "RECORD_DELETED",
+                "Admin deleted appointment ID {$id}",
             );
-            
+
             return new JsonResponse([
                 "status" => "success",
                 "message" => "Appointment deleted",
