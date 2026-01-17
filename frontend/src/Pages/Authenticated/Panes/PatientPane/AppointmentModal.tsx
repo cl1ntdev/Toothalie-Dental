@@ -37,13 +37,11 @@ export default function AppointmentModal({
   onClose,
   appointmentSuccess,
 }: AppointmentProps) {
-  // --- STATE ---
   const [dentists, setDentists] = useState<any[]>([]);
   const [filteredDentists, setFilteredDentists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Selection State
   const [pickDentist, setPickDentist] = useState<string | number>("");
   const [pickDay, setPickDay] = useState<string>("");
   const [pickTime, setPickTime] = useState<string>("");
@@ -54,21 +52,19 @@ export default function AppointmentModal({
     serviceName: string;
   }>({ serviceID: null, serviceName: "", serviceTypeName: "" });
 
-  // Form Details
   const [isEmergency, setIsEmergency] = useState(false);
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
   const [message, setMessage] = useState<string>("");
   
-  // Filters
   const [serviceTypeFilter, setServiceTypeFilter] = useState<ServiceType>("all");
   const [activePopover, setActivePopover] = useState<string | null>(null);
 
-  // --- DATA FETCHING ---
   useEffect(() => {
     const fetchDentists = async () => {
       try {
         setLoading(true);
         const res = await getAllDentist();
+        console.log("dentist are", res)
         if (res.status === "ok" && res.dentists) {
           setDentists(res.dentists);
           setFilteredDentists(res.dentists);
