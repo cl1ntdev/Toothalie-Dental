@@ -19,7 +19,7 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
     email: '',
     username: '',
     password: '',
-    roles: 'ROLE_DENTIST',
+    roles: 'DENTIST',
   });
 
   const handleChange = (e) => {
@@ -31,12 +31,9 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
     e.preventDefault();
     setLoading(true);
 
-    // Prepare payload matching your backend structure
     const payload = {
       ...formData,
-      // Backend expects roles as a stringified array based on previous context
-      roles: JSON.stringify([formData.roles]), 
-      // New users usually start active (disable: null)
+      roles: JSON.stringify(["ROLE_"+formData.roles]), 
       disable: null 
     };
 
