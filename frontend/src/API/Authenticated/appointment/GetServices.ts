@@ -1,11 +1,11 @@
 
-export default async function getServices() {
-  const token = JSON.parse(localStorage.getItem('userInfo')).token;  
+ export async function getServices() {
+  const token = JSON.parse(localStorage.getItem('userInfo')).token;
   try {
         const response = await fetch('/api/get-services',{
           method: "GET",
-          headers: { 
-            "Content-Type": 'application/json', 
+          headers: {
+            "Content-Type": 'application/json',
             "Authorization" : `Bearer ${token}`
           },
         });
@@ -16,4 +16,8 @@ export default async function getServices() {
         console.error("Error fetching services:", error);
         throw error;
     }
+    
 };
+
+
+
