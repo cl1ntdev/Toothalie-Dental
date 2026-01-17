@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { getUsers, deleteUser } from '@/API/Authenticated/admin/AppUser'; 
 import { 
   Pencil, 
@@ -26,7 +26,6 @@ export default function AppUser() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL'); 
-  const [roleOptions, setRoleOptions] = useState('ALL'); 
   
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false); 
@@ -53,16 +52,16 @@ export default function AppUser() {
       setLoading(false);
     }
     
-    const userRoleOptions = [...new Set(users.map(user => user.roles))]
+  }, []);
+  
+  // This automatically updates whenever 'users' changes
+  const roleOptions = useMemo(() => {
+    return [...new Set(users.map(user => user.roles))]
       .map(role => ({ 
-        // This regex removes [, ], and " characters
         label: String(role).replace(/\[|\]|"/g, '').replace('ROLE_', ''), 
         value: role 
       }));
-    console.log("roles are ",userRoleOptions)
-    setRoleOptions(userRoleOptions)
-    
-  }, []);
+  }, [users]); // Only re-runs when 'users' changes
 
   useEffect(() => {
     fetchUsers();
@@ -420,6 +419,7 @@ export default function AppUser() {
         <AppUserCreate 
             onClose={() => setOpenCreateModal(false)} 
             onSuccess={handleCreateSuccess} 
+            userRolesValues={roleOptions}
         /> 
       )}
 
