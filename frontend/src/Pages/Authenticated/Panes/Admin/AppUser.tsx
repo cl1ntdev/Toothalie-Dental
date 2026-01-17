@@ -26,6 +26,7 @@ export default function AppUser() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL'); 
+  const [roleOptions, setRoleOptions] = useState('ALL'); 
   
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false); 
@@ -51,6 +52,16 @@ export default function AppUser() {
     } finally {
       setLoading(false);
     }
+    
+    const userRoleOptions = [...new Set(users.map(user => user.roles))]
+      .map(role => ({ 
+        // This regex removes [, ], and " characters
+        label: String(role).replace(/\[|\]|"/g, '').replace('ROLE_', ''), 
+        value: role 
+      }));
+    console.log("roles are ",userRoleOptions)
+    setRoleOptions(userRoleOptions)
+    
   }, []);
 
   useEffect(() => {
@@ -150,6 +161,7 @@ export default function AppUser() {
       user.username?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesRole = roleFilter === 'ALL' || user.roles.includes(roleFilter);
+    console.log(roleFilter);
     console.log(user)
     const matchesStatus = 
       statusFilter === 'ALL' || 
@@ -158,6 +170,8 @@ export default function AppUser() {
 
     return matchesSearch && matchesRole && matchesStatus;
   });
+  
+ 
 
   if (loading) {
     return (
@@ -202,9 +216,9 @@ export default function AppUser() {
                       onChange={(e) => setRoleFilter(e.target.value)}
                     >
                       <option value="ALL">All Roles</option>
-                      {/*<option value="ROLE_USER">User</option>*/}
-                      <option value="ROLE_DENTIST">Dentist</option>
-                      <option value="ROLE_ADMIN">Admin</option>
+                      {roleOptions.map(role => (
+                        <option key={role.value} value={role.value}>{role.label}</option>
+                      ))}
                     </select>
                     <Filter className="absolute right-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
                 </div>
