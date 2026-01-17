@@ -53,18 +53,18 @@ class SubmitAppointment extends AbstractController
             
             
             $schedule = $connection->fetchAssociative(
-                "SELECT scheduleID FROM schedule WHERE dentistID = ? AND day_of_week = ? AND time_slot = ?",
+                "SELECT id FROM schedule WHERE dentistID = ? AND day_of_week = ? AND time_slot = ?",
                 [$dentistID, $day, $time]
             );
 
-            if ($schedule === false || !isset($schedule['scheduleID'])) {
+            if ($schedule === false || !isset($schedule['id'])) {
                 return new JsonResponse([
                     'status' => 'error',
                     'message' => 'No schedule found for the selected dentist, day, and time'
                 ], 400);
             }
 
-            $scheduleID = $schedule['scheduleID'];
+            $scheduleID = $schedule['id'];
 
             // Insert appointment
             $connection->insert('appointment', [
