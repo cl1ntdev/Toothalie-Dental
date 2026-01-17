@@ -59,31 +59,32 @@ class EditSettings extends AbstractController
                 );
             }
 
-            $roles = $conn->fetchAllAssociative(
-                "SELECT r.role_name
-                 FROM user_role ur
-                 INNER JOIN role r ON ur.role_id = r.id
-                 WHERE ur.user_id = ?",
-                [$dentistID],
+            $user = $conn->fetchAssociative(
+                "SELECT roles FROM user WHERE id = ?",
+                [$dentistID]
             );
-
-            $roleNames = array_map(
-                "strtolower",
-                array_column($roles, "role_name"),
-            );
-            if (!in_array("dentist", $roleNames)) {
+            
+            $userRoles = [];
+            if ($user && !empty($user['roles'])) {
+                $userRoles = json_decode($user['roles'], true); 
+            }
+            
+            $userRoles = array_map('strtolower', $userRoles);
+            
+            if (!in_array("role_dentist", $userRoles)) {
                 return new JsonResponse(
                     [
                         "status" => "error",
                         "message" => "User is not authorized as a dentist",
+                        "debug_roles" => $userRoles 
                     ],
-                    403,
+                    403
                 );
             }
 
             // Fetch existing schedules for this dentist
             $existing = $conn->fetchAllAssociative(
-                "SELECT scheduleID FROM schedule WHERE dentistID = ?",
+                "SELECT id FROM schedule WHERE dentistID = ?",
                 [$dentistID],
             );
             $existingIDs = array_column($existing, "scheduleID");
@@ -178,7 +179,7 @@ class EditSettings extends AbstractController
             return new JsonResponse([
                 "status" => "ok",
                 "message" => "Dentist schedule updated successfully",
-                "dentist" => array_merge($dentist, ["roles" => $roleNames]),
+                // "dentist" => array_merge($dentist, ["roles" => $roleNames]),
                 "processed" => array_values($processedIDs),
                 "deleted" => array_values($deletedIDs),
                 "not_deleted_due_to_appointments" => array_values(

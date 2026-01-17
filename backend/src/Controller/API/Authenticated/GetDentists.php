@@ -81,9 +81,7 @@ class GetDentists extends AbstractController {
             $dentistInfo = $con->fetchAssociative(
                 "SELECT u.id, u.username, u.first_name, u.last_name, u.email, u.roles
                  FROM user u
-                 JOIN user_role ur ON ur.user_id = u.id
-                 JOIN role r ON r.id = ur.role_id
-                 WHERE u.id = ? AND r.role_name = 'DENTIST'",
+                 WHERE u.id = ? AND u.roles LIKE '%\"ROLE_DENTIST\"%'",
                 [$dentistID]
             );
 
@@ -95,7 +93,7 @@ class GetDentists extends AbstractController {
             }
 
             $schedule = $con->fetchAllAssociative(
-                "SELECT scheduleID, day_of_week, time_slot FROM schedule WHERE dentistID = ? ORDER BY day_of_week, time_slot",
+                "SELECT id, day_of_week, time_slot FROM schedule WHERE dentistID = ? ORDER BY day_of_week, time_slot",
                 [$dentistID]
             );
 

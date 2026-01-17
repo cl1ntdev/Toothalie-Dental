@@ -22,8 +22,8 @@ final class GetHistory extends AbstractController
             $queryBase = "";
             
             $queryBase = match ($role) {
-                'DENTIST' => "SELECT appointment_id FROM appointment WHERE dentist_id = ?",
-                'PATIENT' => "SELECT appointment_id FROM appointment WHERE patient_id = ?",
+                'DENTIST' => "SELECT id FROM appointment WHERE dentist_id = ?",
+                'PATIENT' => "SELECT id FROM appointment WHERE patient_id = ?",
                 
                 default   => null,
             };
@@ -44,7 +44,7 @@ final class GetHistory extends AbstractController
                 // "SELECT appointment_id FROM appointment WHERE patient_id = ? AND deleted_on IS NULL",
                 [$userID]
             );
-            $appointmentIDs = array_column($ids, 'appointment_id');
+            $appointmentIDs = array_column($ids, 'id');
 
             if (empty($appointmentIDs)) {
                 return new JsonResponse([
@@ -72,7 +72,7 @@ final class GetHistory extends AbstractController
                         patient.last_name AS patient_last_name
                 
                     FROM appointment_log al
-                    JOIN appointment a ON a.appointment_id = al.appointment_id
+                    JOIN appointment a ON a.id = al.appointment_id
                 
                     -- Join dentist user
                     JOIN user dentist ON dentist.id = a.dentist_id
@@ -100,7 +100,7 @@ final class GetHistory extends AbstractController
                         patient.last_name AS patient_last_name
                 
                     FROM appointment_log al
-                    JOIN appointment a ON a.appointment_id = al.appointment_id
+                    JOIN appointment a ON a.id = al.appointment_id
                 
                     -- Join dentist user
                     JOIN user dentist ON dentist.id = a.dentist_id

@@ -29,7 +29,7 @@ class AppointmentDetails extends AbstractController
                 "SELECT *, s.name as service_name FROM appointment a
                  JOIN service s WHERE a.service_id = s.id and
                  a.dentist_id = ? AND a.deleted_on IS NULL 
-                 ORDER BY appointment_id DESC",
+                 ORDER BY a.id DESC",
                 [$dentistID]
             );
 
