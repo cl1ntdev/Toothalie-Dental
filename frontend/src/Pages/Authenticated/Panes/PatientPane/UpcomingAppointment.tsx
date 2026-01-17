@@ -265,7 +265,7 @@ export default function UpcomingAppointment() {
                     <div className="flex items-center gap-4 text-sm text-slate-600 bg-slate-50/50 p-3 rounded-xl border border-slate-50">
                         <div className="flex items-center gap-2">
                             <Clock size={16} className="text-indigo-500" />
-                            <span className="font-medium">{schedule?.time_slot || 'Time TBD'}</span>
+                            <span className="font-medium">{appointment?.appointment_date || 'Time TBD'}</span>
                         </div>
                         <div className="w-px h-4 bg-slate-200"></div>
                         <div className="flex items-center gap-2 text-slate-500">
@@ -291,7 +291,7 @@ export default function UpcomingAppointment() {
                     )}
                     {canEdit && (
                         <button
-                        onClick={() => handleEdit(appointment.appointment_id)}
+                        onClick={() => handleEdit(appointment?.id)}
                         className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Edit Appointment"
                         >
@@ -300,7 +300,7 @@ export default function UpcomingAppointment() {
                     )}
                     {canDelete && (
                         <button
-                        onClick={() => handleDelete(appointment.appointment_id)}
+                        onClick={() => handleDelete(appointment?.id)}
                         className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                         title="Cancel Appointment"
                         >

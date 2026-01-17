@@ -15,7 +15,8 @@ import {
   AlertTriangle,
   Users,
   CheckCircle2,
-  Loader2 // Using Loader2 for consistency with standard UI, can swap for Activity
+  Loader2,
+  History // Added History icon for the "Current" badge
 } from "lucide-react";
 import {
   Popover,
@@ -49,6 +50,8 @@ export default function EditModal({
 }: EditModalProps) {
   const [loading, setLoading] = useState(true);
   const [appointmentInfo, setAppointmentInfo] = useState<any>(null);
+  
+  // State for form selection
   const [selectedSchedule, setSelectedSchedule] = useState<string>("");
   const [isEmergency, setIsEmergency] = useState(false);
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
@@ -56,13 +59,16 @@ export default function EditModal({
   const [day, setDay] = useState("");
   const [message, setMessage] = useState<string>("");
 
+  // New State to track the ORIGINAL data for highlighting
+  const [originalScheduleID, setOriginalScheduleID] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         if (!appointmentID) return;
-
         const data = await FetchEditAppointmentDetailsAPI(appointmentID);
+        
         setDate(new Date(data.appointment.user_set_date));
         setDay(data.appointment.day_of_week);
         
@@ -73,8 +79,11 @@ export default function EditModal({
         }
 
         setAppointmentInfo(data);
-        if (data.scheduleDetails?.scheduleID) {
-          setSelectedSchedule(data.scheduleDetails.scheduleID.toString());
+        
+        if (data.scheduleDetails?.id) {
+            const idString = data.scheduleDetails.id.toString();
+            setSelectedSchedule(idString);
+            setOriginalScheduleID(idString); // Store the original ID
         }
       } catch (err) {
         console.error(err);
@@ -97,7 +106,7 @@ export default function EditModal({
   const handleTimeSlotSelect = (scheduleID: string, dayOfWeek: string) => {
     setSelectedSchedule(scheduleID);
     setDay(dayOfWeek);
-    setDate(undefined); // Reset date when slot changes to force re-selection
+    setDate(undefined); 
   };
 
   const handleSave = async () => {
@@ -131,7 +140,7 @@ export default function EditModal({
   }
 
   if (!appointmentInfo) return null;
-  console.log(appointmentInfo)
+
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 font-sans animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
@@ -223,22 +232,43 @@ export default function EditModal({
                   <div className="flex flex-wrap gap-2">
                     {appointmentInfo.schedules[dayOfWeek].map(
                       (schedule: any, slotIndex: number) => {
-                        const isSelected = selectedSchedule === schedule.scheduleID.toString();
+                        
+                        const idString = schedule.id.toString();
+                        const isSelected = selectedSchedule === idString;
+                        // Check if this slot matches the one from the database
+                        const isOriginal = originalScheduleID === idString;
+
                         return (
                           <button
                             key={slotIndex}
-                            onClick={() => handleTimeSlotSelect(schedule.scheduleID.toString(), dayOfWeek)}
+                            onClick={() => handleTimeSlotSelect(idString, dayOfWeek)}
                             className={`
                               relative px-3 py-2 rounded-lg text-xs font-medium transition-all border
                               ${isSelected 
                                 ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" 
-                                : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
+                                : isOriginal
+                                    ? "bg-indigo-50 text-indigo-700 border-indigo-200" // Specific style for original but not selected (if user clicks away)
+                                    : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
                               }
                             `}
                           >
+                            {/* Selected Checkmark */}
                             {isSelected && <CheckCircle2 size={12} className="absolute -top-1 -right-1 text-white bg-indigo-600 rounded-full" />}
+                            
+                            {/* Original "Current" Badge */}
+                            {isOriginal && !isSelected && (
+                                <span className="absolute -top-2 -right-1 bg-slate-600 text-[9px] text-white px-1.5 py-0.5 rounded-full font-bold shadow-sm">
+                                    Current
+                                </span>
+                            )}
+                            
                             <span className="flex items-center gap-1.5">
-                                <Clock size={12} className={isSelected ? "text-indigo-200" : "text-slate-400"} />
+                                {/* If it is the original slot, use a different icon or color */}
+                                {isOriginal ? (
+                                    <History size={12} className={isSelected ? "text-indigo-200" : "text-indigo-500"} />
+                                ) : (
+                                    <Clock size={12} className={isSelected ? "text-indigo-200" : "text-slate-400"} />
+                                )}
                                 {schedule.time_slot}
                             </span>
                           </button>

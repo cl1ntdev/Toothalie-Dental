@@ -40,7 +40,7 @@ class UpdateAppointment extends AbstractController
             }
 
             $appointment = $connection->fetchAssociative(
-                "SELECT * FROM appointment WHERE appointment_id = ?",
+                "SELECT * FROM appointment WHERE id = ?",
                 [$appointmentID]
             );
 
@@ -60,16 +60,16 @@ class UpdateAppointment extends AbstractController
                    'appointment_type_id'=> $appointment_type_id,
                    'message'=> $message
                ],
-                ['appointment_id'=>$appointmentID]
+                ['id'=>$appointmentID]
             );
             
                        $appointmentAfter = $connection->fetchAssociative(
-                           "SELECT * FROM appointment WHERE appointment_id = ?",
+                           "SELECT * FROM appointment WHERE id = ?",
                            [$appointmentID]
                        );
            
                        $connection->insert('appointment_log', [
-                           'appointment_id' => $appointmentID,
+                           'id' => $appointmentID,
                            'actor_type' => 'patient',
                            'action' => 'update',
                            'message' => 'Updated appointment details.',

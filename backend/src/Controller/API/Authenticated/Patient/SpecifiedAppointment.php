@@ -29,8 +29,10 @@ class SpecifiedAppointment extends AbstractController
                 ], 400);
             }
 
+            // 1. Fetch the Appointment
+            // User confirmed: appointment primary key is "id"
             $appointment = $connection->fetchAssociative(
-                "SELECT * FROM appointment WHERE appointment_id = ?",
+                "SELECT * FROM appointment WHERE id = ?",
                 [$appointmentID]
             );
 
@@ -41,13 +43,16 @@ class SpecifiedAppointment extends AbstractController
                 ], 404);
             }
 
+            // 2. Fetch the Dentist info
             $dentist = $connection->fetchAssociative(
                 "SELECT * FROM user WHERE id = ?",
                 [$appointment['dentist_id']]
             );
 
+            // 3. Fetch ALL Schedules for this Dentist (for the dropdown/selection list)
+            // User confirmed: schedule primary key is "id"
             $schedules = $connection->fetchAllAssociative(
-                "SELECT scheduleID, day_of_week, time_slot 
+                "SELECT id, day_of_week, time_slot 
                  FROM schedule 
                  WHERE dentistID = ? 
                  ORDER BY day_of_week, time_slot",
@@ -57,17 +62,24 @@ class SpecifiedAppointment extends AbstractController
             $groupedSchedules = [];
             foreach ($schedules as $s) {
                 $groupedSchedules[$s['day_of_week']][] = [
-                    'scheduleID' => $s['scheduleID'],
+                    'id' => $s['id'],
                     'time_slot'  => $s['time_slot']
                 ];
             }
 
-            $selectedSchedule = $connection->fetchAssociative(
-                "SELECT scheduleID, day_of_week, time_slot 
-                 FROM schedule 
-                 WHERE scheduleID = ?",
-                [$appointment['schedule_id']]
-            );
+            // 4. Fetch the SPECIFIC Schedule currently assigned to this appointment
+            // FIX: We must use the foreign key 'schedule_id' from the appointment, 
+            // NOT the appointment's own 'id'.
+            $selectedSchedule = null;
+            
+            if (!empty($appointment['schedule_id'])) {
+                $selectedSchedule = $connection->fetchAssociative(
+                    "SELECT id, day_of_week, time_slot 
+                     FROM schedule 
+                     WHERE id = ?", 
+                    [$appointment['schedule_id']] // <--- FIXED THIS LINE
+                );
+            }
 
             return new JsonResponse([
                 'status' => 'ok',

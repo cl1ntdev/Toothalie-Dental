@@ -37,7 +37,7 @@ class DeleteAppointmentAPI extends AbstractController
             }
 
             $appointment = $connection->fetchAssociative(
-                "SELECT * FROM appointment WHERE appointment_id = ?",
+                "SELECT * FROM appointment WHERE id = ?",
                 [$appointmentID]
             );
 
@@ -48,26 +48,21 @@ class DeleteAppointmentAPI extends AbstractController
                 ], 404);
             }
 
-            // Soft delete by setting deleted_on timestamp
             $connection->update(
                 'appointment',
                 ['deleted_on' => new \DateTime()->format('Y-m-d H:i:s')],
-                ['appointment_id' => $appointmentID]
+                ['id' => $appointmentID]
             );
 
-            // Log the deletion
-            // Log the deletion
             $logger->log(
                 'RECORD_DELETED',
                 "Patient deleted appointment ID {$appointmentID}",
-                null, // No user object here, it's just a snapshot
+                null, 
                 [
                     'actor_type' => 'PATIENT',
-                    'appointment_snapshot' => $appointment, // can be array, logger should handle serialization
+                    'appointment_snapshot' => $appointment, 
                 ]
             );
-
-
 
             return new JsonResponse([
                 'status' => 'success',
@@ -78,6 +73,7 @@ class DeleteAppointmentAPI extends AbstractController
             $logger->log(
                 'ERROR',
                 "Failed to delete appointment: " . $e->getMessage(),
+                null,
                 ['actor_type' => 'PATIENT']
             );
 
