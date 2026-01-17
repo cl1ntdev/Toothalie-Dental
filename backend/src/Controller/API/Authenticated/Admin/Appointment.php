@@ -25,7 +25,7 @@ class Appointment extends AbstractController
         try {
             $appointments = $connection->fetchAllAssociative('
                 SELECT
-                    a.appointment_id,
+                    a.id,
                     a.appointment_date,
                     a.status,
                     a.message,
@@ -109,7 +109,7 @@ class Appointment extends AbstractController
     ): JsonResponse {
         try {
             $appointment = $connection->fetchAssociative(
-                "SELECT * FROM appointment WHERE appointment_id = ?",
+                "SELECT * FROM appointment WHERE id = ?",
                 [$id],
             );
             if (!$appointment) {
@@ -251,7 +251,7 @@ class Appointment extends AbstractController
                     ], 400);
                 }
         
-                $connection->update("appointment", $updateData, ["appointment_id" => $appointmentID]);
+                $connection->update("appointment", $updateData, ["id" => $appointmentID]);
                 
                 // Log the update
                 $logger->log(
@@ -286,7 +286,7 @@ class Appointment extends AbstractController
     ): JsonResponse {
         try {
             $appointment = $connection->fetchAssociative(
-                "SELECT * FROM appointment WHERE appointment_id = ?",
+                "SELECT * FROM appointment WHERE id = ?",
                 [$id],
             );
             if (!$appointment) {
@@ -296,7 +296,7 @@ class Appointment extends AbstractController
                 );
             }
 
-            $connection->delete("appointment", ["appointment_id" => $id]);
+            $connection->delete("appointment", ["id" => $id]);
             
             // Log the deletion
             $logger->log(
