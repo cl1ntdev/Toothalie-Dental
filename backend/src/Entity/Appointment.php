@@ -11,28 +11,51 @@ class Appointment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "appointment_id", type: "integer")]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[
+        ORM\Column(
+            type: Types::DATETIME_MUTABLE,
+            options: ["default" => "CURRENT_TIMESTAMP"],
+        ),
+    ]
     private ?\DateTime $appointmentDate = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "patient_id", referencedColumnName: "id", nullable: false)]
+    #[
+        ORM\JoinColumn(
+            name: "patient_id",
+            referencedColumnName: "id",
+            nullable: false,
+        ),
+    ]
     private User $patient;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "dentist_id", referencedColumnName: "id", nullable: false)]
+    #[
+        ORM\JoinColumn(
+            name: "dentist_id",
+            referencedColumnName: "id",
+            nullable: false,
+        ),
+    ]
     private User $dentist;
 
     #[ORM\ManyToOne(targetEntity: Schedule::class, inversedBy: "appointments")]
-    #[ORM\JoinColumn(name: "schedule_id", referencedColumnName: "scheduleID", nullable: false)]
+    #[
+        ORM\JoinColumn(
+            name: "schedule_id",
+            referencedColumnName: "id",
+            nullable: false,
+        ),
+    ]
     private Schedule $schedule;
 
     #[ORM\Column(nullable: true)]
     private ?bool $Emergency = null;
 
-    #[ORM\ManyToOne(inversedBy: 'appointments')]
+    #[ORM\ManyToOne(inversedBy: "appointments")]
     private ?AppointmentType $appointmentType = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -48,8 +71,14 @@ class Appointment
     private ?\DateTime $deletedOn = null;
 
     // 🔹 Correct relation to Service
-    #[ORM\ManyToOne(targetEntity: Service::class, inversedBy: 'appointments')]
-    #[ORM\JoinColumn(name: "service_id", referencedColumnName: "id", nullable: true)]
+    #[ORM\ManyToOne(targetEntity: Service::class, inversedBy: "appointments")]
+    #[
+        ORM\JoinColumn(
+            name: "service_id",
+            referencedColumnName: "id",
+            nullable: true,
+        ),
+    ]
     private ?Service $service = null;
 
     // Getters & Setters
@@ -119,8 +148,9 @@ class Appointment
         return $this->appointmentType;
     }
 
-    public function setAppointmentType(?AppointmentType $appointmentType): static
-    {
+    public function setAppointmentType(
+        ?AppointmentType $appointmentType,
+    ): static {
         $this->appointmentType = $appointmentType;
         return $this;
     }

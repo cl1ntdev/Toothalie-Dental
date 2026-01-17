@@ -12,7 +12,7 @@ class Schedule
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "scheduleID", type: "integer")]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
@@ -23,10 +23,22 @@ class Schedule
 
     // 🔗 Many schedules belong to one dentist (now a User)
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "dentistID", referencedColumnName: "id", nullable: false)]
+    #[
+        ORM\JoinColumn(
+            name: "dentistID",
+            referencedColumnName: "id",
+            nullable: false,
+        ),
+    ]
     private User $dentist;
 
-    #[ORM\OneToMany(mappedBy: "schedule", targetEntity: Appointment::class, cascade: ["persist", "remove"])]
+    #[
+        ORM\OneToMany(
+            mappedBy: "schedule",
+            targetEntity: Appointment::class,
+            cascade: ["persist", "remove"],
+        ),
+    ]
     private Collection $appointments;
 
     public function __construct()
