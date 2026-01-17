@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Plus, Loader2, Eye, EyeOff } from 'lucide-react';
 import { createUser } from '@/API/Authenticated/admin/AppUser';
-export default function AppUserCreate({ onClose, onSuccess }) {
+
+
+export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [userRoles, setUserRoles] = useState<[]>(userRolesValues)
   
+  useEffect(()=>{
+    setUserRoles(userRolesValues)
+    console.log("Roles here are 1 ",userRolesValues);
+  },[userRolesValues])
+   
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: '',
     username: '',
     password: '',
-    role: 'ROLE_USER',
+    roles: 'ROLE_DENTIST',
   });
 
   const handleChange = (e) => {
@@ -27,7 +35,7 @@ export default function AppUserCreate({ onClose, onSuccess }) {
     const payload = {
       ...formData,
       // Backend expects roles as a stringified array based on previous context
-      roles: JSON.stringify([formData.role]), 
+      roles: JSON.stringify([formData.roles]), 
       // New users usually start active (disable: null)
       disable: null 
     };
@@ -48,6 +56,8 @@ export default function AppUserCreate({ onClose, onSuccess }) {
     }
   };
 
+  
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
@@ -110,17 +120,17 @@ export default function AppUserCreate({ onClose, onSuccess }) {
 
             {/* Role */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Role</label>
+              <label className="text-sm font-medium text-gray-700">Roles</label>
               <select
-                name="role"
-                value={formData.role}
+                name="roles"
+                value={formData.roles}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
               >
                 {/*<option value="ROLE_USER">User</option>*/}
-                <option value="ROLE_DENTIST">Dentist</option>
-                <option value="ROLE_ADMIN">Admin</option>
-                <option value="ROLE_PATIENT">Patient</option>
+                {userRoles.map(role => (
+                  <option key={role.value} value={role.value}>{role.label}</option>
+                ))}
               </select>
             </div>
 
