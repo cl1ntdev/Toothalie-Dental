@@ -29,6 +29,12 @@ class UpdateAppointment extends AbstractController
             $appointmentID = $data["id"] ?? null;
             $status = $data["status"] ?? null;
 
+            // // debugging
+            // return new JsonResponse([
+            //     "status" => $status,
+            //     "id" => $appointmentID,
+            // ]);
+            
             if (!$appointmentID || !$status) {
                 return new JsonResponse(
                     [
@@ -40,7 +46,7 @@ class UpdateAppointment extends AbstractController
             }
 
             $appointment = $connection->fetchAssociative(
-                "SELECT * FROM appointment WHERE appointment_id = ?",
+                "SELECT * FROM appointment WHERE id = ?",
                 [$appointmentID],
             );
 
@@ -57,7 +63,7 @@ class UpdateAppointment extends AbstractController
             $connection->update(
                 "appointment",
                 ["status" => $status],
-                ["appointment_id" => $appointmentID],
+                ["id" => $appointmentID],
             );
 
             // Log via ActivityLogger

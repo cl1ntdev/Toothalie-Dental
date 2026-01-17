@@ -36,10 +36,11 @@ class AppointmentDetails extends AbstractController
 
             //Fetch all appointments assigned to this dentist
             $appointments = $connection->fetchAllAssociative(
-                "SELECT *, s.name as service_name FROM appointment a
-                 JOIN service s WHERE a.service_id = s.id and
-                 a.dentist_id = ? AND a.deleted_on IS NULL
-                 ORDER BY a.id DESC",
+                "SELECT a.*, a.id AS appointment_id, s.name as service_name
+                             FROM appointment a
+                             JOIN service s ON a.service_id = s.id
+                             WHERE a.dentist_id = ? AND a.deleted_on IS NULL
+                             ORDER BY a.id DESC",
                 [$dentistID],
             );
 

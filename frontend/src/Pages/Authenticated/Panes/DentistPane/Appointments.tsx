@@ -72,6 +72,7 @@ export default function Appointments() {
         setLoading(true);
         setError(null);
         const data = await fetchAppointmentDentist();
+        console.log(data)
         
         if (data?.status === "ok" && Array.isArray(data.appointments)) {
           const formatted = data.appointments.map((item: any) => {
@@ -80,7 +81,7 @@ export default function Appointments() {
             const schedule = item.schedule || {};
 
             return {
-              id: appt.appointment_id,
+              id: appt.id,
               date: appt.user_set_date,
               time: appt.appointment_date?.split(" ")[1],
               day_of_week: schedule.day_of_week,
@@ -163,9 +164,10 @@ export default function Appointments() {
     }
   };
 
-  const handleView = (appointment: any) => {
+  const handleView = (appointment:any) => {
     console.log(appointment)
     setModalMode('details');
+    console.log('viewing')
     // console.log(viewAppointment)
     // Initialize with one empty day when opening
     setReminderSchedule([
@@ -185,10 +187,11 @@ export default function Appointments() {
     setModalMode('details');
   };
 
-  const handleStatusUpdate = async (appointmentId: string, newStatus: string) => {
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
     try {
       setIsUpdating(true);
-      const update = await UpdateDentistAppointment(appointmentId, newStatus);
+      console.log("the appointmentid is",id)
+      const update = await UpdateDentistAppointment(id, newStatus);
       console.log(update)
       
       if (update.status == "success") {
@@ -201,7 +204,7 @@ export default function Appointments() {
                });
 
         setAppointmentsData((prev) =>
-          prev.map((a) => (a.id === appointmentId ? { ...a, status: newStatus } : a))
+          prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
         );
         setViewAppointment((prev: any) => ({ ...prev, status: newStatus }));
       } else {
@@ -421,13 +424,14 @@ export default function Appointments() {
 
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {appointmentsData.map((appointment, index) => {
+            console.log(appointment)
             const statusCfg = getStatusConfig(appointment.status);
             const typeCfg = getAppointmentTypeConfig(appointment.appointment_type_id);
             const TypeIcon = typeCfg.icon;
 
             return (
               <div
-                key={appointment.id || index}
+                key={index}
                 className={`group relative bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col
                   ${appointment.emergency ? "ring-1 ring-red-200" : ""}
                 `}
@@ -491,7 +495,7 @@ export default function Appointments() {
       </div>
 
       {/* --- Unified Modal --- */}
-      {viewAppointment && (
+        {viewAppointment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
           <div 
             className="absolute inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity" 

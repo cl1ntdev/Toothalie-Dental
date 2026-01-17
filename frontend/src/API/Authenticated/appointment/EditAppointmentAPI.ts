@@ -60,7 +60,7 @@ export async function UpdateAppointment(
 //  For dentist updates
 
 export async function UpdateDentistAppointment(
-  appointment_id: string | null,
+  id: string | null,
   status: string,
 ) {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -72,7 +72,7 @@ export async function UpdateDentistAppointment(
       "Content-Type": "application/json",
       Authorization: `Bearer ${userInfo.token}`,
     },
-    body: JSON.stringify({ appointment_id, status }),
+    body: JSON.stringify({ id, status }),
   });
   return update.json();
 }
