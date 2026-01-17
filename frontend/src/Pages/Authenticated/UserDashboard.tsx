@@ -199,6 +199,13 @@ const DashboardLayout = ({
       </aside>
 
       {/* Main Content Area */}
+      {/* Main Content Area */}
+      {/* Main Content Area */}
+      {/* Main Content Area */}
+      {/* Main Content Area */}
+      {/* Main Content Area */}
+      {/* Main Content Area */}
+      {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto relative h-full">
         <div className="max-w-13xl mx-auto p-6 lg:p-10">
           
