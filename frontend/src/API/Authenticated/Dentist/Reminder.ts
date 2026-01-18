@@ -1,15 +1,15 @@
-export async function saveReminder(payload, appointmentID: string) {
+export async function saveReminder(payload, id: string) {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
   console.log(payload);
-  console.log(appointmentID);
+  console.log(id);
   const result = await fetch("/api/save-reminder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userInfo.token}`,
     },
-    body: JSON.stringify({ payload, appointmentID }),
+    body: JSON.stringify({ payload, id }),
   });
 
   const data = await result.json();
@@ -17,17 +17,17 @@ export async function saveReminder(payload, appointmentID: string) {
   return data;
 }
 
-export async function getReminder(appointmentID: string) {
+export async function getReminder(id: string) {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  console.log(appointmentID);
+  console.log(id);
   const result = await fetch("/api/get-reminder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userInfo.token}`,
     },
-    body: JSON.stringify({ appointmentID }),
+    body: JSON.stringify({id }),
   });
 
   const data = await result.json();

@@ -63,14 +63,13 @@ export default function Appointment() {
   const [allServices, setAllServices] = useState({}); // { dentistId: [services] }
 
   const [users, setUsers] = useState([]);
-  
-  const [alert, setAlert] = useState({ 
-       show: false, 
-       type: "info", 
-       title: "", 
-       message: "" 
-     });
- 
+
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "info",
+    title: "",
+    message: "",
+  });
 
   // ============= ss
   useEffect(() => {
@@ -87,9 +86,7 @@ export default function Appointment() {
       // Set selected schedule if editing
       if (sID) {
         setSelectedScheduleId(sID);
-        const schedule = (allSchedules[dID] || []).find(
-          (s) => s.scheduleID === sID,
-        );
+        const schedule = (allSchedules[dID] || []).find((s) => s.id === sID);
         if (schedule) {
           setSelectedScheduleDay(schedule.day_of_week);
         }
@@ -193,26 +190,23 @@ export default function Appointment() {
           ...formData,
         });
         console.log(res);
-        if(res.status == 'success'){
-          
+        if (res.status == "success") {
           setAlert({
-                   show: true,
-                   type: "success", // success, error, warning, info
-                   title: "Updated Successfully",
-                   message: "Appointment updated in the system."
-                 });
-         
-
+            show: true,
+            type: "success", // success, error, warning, info
+            title: "Updated Successfully",
+            message: "Appointment updated in the system.",
+          });
         }
       } else {
         setAlert({
-                 show: true,
-                 type: "success", // success, error, warning, info
-                 title: "Created Successfully",
-                 message: "Appointment added to the system."
-               });
+          show: true,
+          type: "success", // success, error, warning, info
+          title: "Created Successfully",
+          message: "Appointment added to the system.",
+        });
         const res = await createAppointment(formData);
-        console.log(res)
+        console.log(res);
       }
       fetchAppointments();
       handleModalClose();
@@ -233,20 +227,16 @@ export default function Appointment() {
     try {
       const res = await deleteAppointment(IDtoDelete);
       console.log(res);
-      setAppointments((prev) =>
-        prev.filter((app) => app.appointment_id !== IDtoDelete),
-      );
+      setAppointments((prev) => prev.filter((app) => app.id !== IDtoDelete));
       setOpenDeleteModal(false);
       setIDtoDelete(null);
-      
-      setAlert({
-               show: true,
-               type: "success", // success, error, warning, info
-               title: "Deleted Successfully",
-               message: "Appointment deleted from the system."
-             });
-     
 
+      setAlert({
+        show: true,
+        type: "success", // success, error, warning, info
+        title: "Deleted Successfully",
+        message: "Appointment deleted from the system.",
+      });
     } catch (error) {
       console.error("Error deleting appointment", error);
       alert("Failed to delete appointment");
@@ -589,7 +579,7 @@ export default function Appointment() {
                             <Pencil size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeleteClick(a.appointment_id)}
+                            onClick={() => handleDeleteClick(a.id)}
                             className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                             title="Delete"
                           >
@@ -800,7 +790,7 @@ export default function Appointment() {
                             setSelectedScheduleId(scheduleId);
                             // Find the selected schedule to get its day of week
                             const selectedSchedule = availableSchedules.find(
-                              (sch) => sch.scheduleID.toString() === scheduleId,
+                              (sch) => sch.id.toString() === scheduleId,
                             );
                             if (selectedSchedule) {
                               const dayOfWeek = selectedSchedule.day_of_week;
@@ -824,7 +814,7 @@ export default function Appointment() {
                             Select schedule
                           </option>
                           {availableSchedules.map((sch) => (
-                            <option key={sch.scheduleID} value={sch.scheduleID}>
+                            <option key={sch.id} value={sch.id}>
                               {sch.day_of_week} — {sch.time_slot}
                             </option>
                           ))}
@@ -879,6 +869,7 @@ export default function Appointment() {
                         <select
                           name="service_id"
                           defaultValue={currentAppointment?.service_id || ""}
+                          required
                           className="block w-full rounded-lg border-gray-300 border text-sm py-2 bg-white"
                         >
                           <option value="" disabled>
@@ -980,14 +971,13 @@ export default function Appointment() {
           </div>
         </div>
       )}
-      <Alert 
-                      isOpen={alert.show} 
-                      type={alert.type}
-                      title={alert.title}
-                      message={alert.message}
-                      onClose={() => setAlert({ ...alert, show: false })} 
-                    />
-        
+      <Alert
+        isOpen={alert.show}
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ ...alert, show: false })}
+      />
     </div>
   );
 }
