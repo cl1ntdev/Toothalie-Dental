@@ -34,5 +34,5 @@ Full texts
 
 
 <goal>
-    You are to create a crud function for the admin panel. You may create new file in the backend that handles the crud for the admin and create new panes that handles the UI crud. You can look at other files on the admin for reference
+    You are to create a crud function for the admin panel. You may create new file in the backend that handles the crud for the admin and create new panes that handles the UI crud. You can look at other files on the admin for reference. the sample data are given above from db
 </goal>
