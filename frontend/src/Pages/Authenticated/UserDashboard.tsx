@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import DisableAccount from "../ErrorRoute/DisableAccount";
 // API Imports
-import { getDentistData } from "@/API/Authenticated/GetDentist";
 import GetUserInfo from "@/API/Authenticated/GetUserInfoAPI";
 import { LogoutUser } from "@/API/Authenticated/Logout";
 
@@ -34,7 +33,6 @@ import ServiceTypes from "./Panes/Admin/ServiceTypes";
 import AppointmentTypes from "./Panes/Admin/AppointmentTypes";
 import Roles from "./Panes/Admin/Roles";
 import Reminder from "./Panes/Admin/Reminder";
-import Schedule from "./es/Admin/Schedule";
 import HistoryPane from "./Panes/All/History";
 import { MyProfile } from "./Panes/All/MyProfile";
 import { MyAdmin } from "./Panes/Admin/MyAdmin";
