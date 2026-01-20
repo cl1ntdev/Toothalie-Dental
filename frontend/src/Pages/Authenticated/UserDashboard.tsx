@@ -29,8 +29,12 @@ import UpcomingAppointment from "./Panes/PatientPane/UpcomingAppointment";
 import AppUser from "./Panes/Admin/AppUser";
 import Appointment from "./Panes/Admin/Appointment";
 import DentistService from "./Panes/Admin/DentistService";
+import Services from "./Panes/Admin/Services";
+import ServiceTypes from "./Panes/Admin/ServiceTypes";
+import AppointmentTypes from "./Panes/Admin/AppointmentTypes";
+import Roles from "./Panes/Admin/Roles";
 import Reminder from "./Panes/Admin/Reminder";
-import Schedule from "./Panes/Admin/Schedule";
+import Schedule from "./es/Admin/Schedule";
 import HistoryPane from "./Panes/All/History";
 import { MyProfile } from "./Panes/All/MyProfile";
 import { MyAdmin } from "./Panes/Admin/MyAdmin";
@@ -258,6 +262,10 @@ export default function UserDashboard() {
     { label: "Appointments", icon: Calendar, key: "Appointments" },
     { label: "Reminders", icon: NotebookPen, key: "Reminders" },
     { label: "Services", icon: User, key: "DentistServices" },
+    { label: "Manage Services", icon: User, key: "Services" },
+    { label: "Service Types", icon: NotebookPen, key: "ServiceTypes" },
+    { label: "Appointment Types", icon: Calendar, key: "AppointmentTypes" },
+    { label: "Roles", icon: Users, key: "Roles" },
     { label: "Schedules", icon: Clock, key: "Schedules" },
     { label: "System Logs", icon: TableOfContents, key: "Logs" },
   ];
@@ -356,6 +364,10 @@ export default function UserDashboard() {
         case "Users": return <AppUser />;
         case "Appointments": return <Appointment />;
         case "DentistServices": return <DentistService />;
+        case "Services": return <Services />;
+        case "ServiceTypes": return <ServiceTypes />;
+        case "AppointmentTypes": return <AppointmentTypes />;
+        case "Roles": return <Roles />;
         case "Reminders": return <Reminder />;
         case "Schedules": return <Schedule />;
         case "Logs": return <Logs />;
