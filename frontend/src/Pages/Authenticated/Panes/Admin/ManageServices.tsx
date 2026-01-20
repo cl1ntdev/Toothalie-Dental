@@ -18,7 +18,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import Alert from '@/components/_myComp/Alerts';
-export default function DentistService() {
+export default function ManageServices() {
   const [dentistServices, setDentistServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

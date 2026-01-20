@@ -27,8 +27,8 @@ import { SettingsPane } from "./Panes/DentistPane/SettingsPane";
 import UpcomingAppointment from "./Panes/PatientPane/UpcomingAppointment";
 import AppUser from "./Panes/Admin/AppUser";
 import Appointment from "./Panes/Admin/Appointment";
-import DentistService from "./Panes/Admin/DentistService";
-import Services from "./Panes/Admin/Services";
+import ManageServices from "./Panes/Admin/ManageServices";
+import DentistServices from "./Panes/Admin/DentistServices";
 import ServiceTypes from "./Panes/Admin/ServiceTypes";
 import AppointmentTypes from "./Panes/Admin/AppointmentTypes";
 import Roles from "./Panes/Admin/Roles";
@@ -37,7 +37,7 @@ import HistoryPane from "./Panes/All/History";
 import { MyProfile } from "./Panes/All/MyProfile";
 import { MyAdmin } from "./Panes/Admin/MyAdmin";
 import Logs from "./Panes/Admin/Logs";
-
+import Schedule from "./Panes/Admin/Schedule";
 // ==========================================
 // PART 1: The UI Layout Component (Pure UI)
 // ==========================================
@@ -259,8 +259,8 @@ export default function UserDashboard() {
     { label: "Users", icon: Users, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
     { label: "Reminders", icon: NotebookPen, key: "Reminders" },
-    { label: "Services", icon: User, key: "DentistServices" },
-    { label: "Manage Services", icon: User, key: "Services" },
+    { label: "Dentist Services", icon: User, key: "Dentist Services" },
+    { label: "Manage Services", icon: User, key: "Manage Services" },
     { label: "Service Types", icon: NotebookPen, key: "ServiceTypes" },
     { label: "Appointment Types", icon: Calendar, key: "AppointmentTypes" },
     { label: "Roles", icon: Users, key: "Roles" },
@@ -361,8 +361,8 @@ export default function UserDashboard() {
         case "AdminDashboard": return <MyAdmin />;
         case "Users": return <AppUser />;
         case "Appointments": return <Appointment />;
-        case "DentistServices": return <DentistService />;
-        case "Services": return <Services />;
+        case "Manage Services": return <DentistServices />;
+        case "Dentist Services": return <ManageServices />;
         case "ServiceTypes": return <ServiceTypes />;
         case "AppointmentTypes": return <AppointmentTypes />;
         case "Roles": return <Roles />;

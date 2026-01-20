@@ -5,7 +5,7 @@ import { Pencil, Trash2, Plus, Activity } from 'lucide-react';
 import Alert from '@/components/_myComp/Alerts';
 import { getServiceTypes } from '@/API/Authenticated/admin/ServiceTypeAdmin';
 
-export default function Services() {
+export default function DentistServices() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
