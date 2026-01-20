@@ -5,7 +5,7 @@ import { Pencil, Trash2, Plus, Activity } from 'lucide-react';
 import Alert from '@/components/_myComp/Alerts';
 import { getServiceTypes } from '@/API/Authenticated/admin/ServiceTypeAdmin';
 
-export default function DentistServices() {
+export default function ManageService() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,7 +74,15 @@ export default function DentistServices() {
   };
 
   if (loading) return (
-    <div className="flex items-center justify-center min-h-[200px]"><Activity className="animate-spin" /></div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 font-ceramon">
+      <div className="relative">
+        <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+        <Activity className="w-6 h-6 text-indigo-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+      </div>
+      <p className="mt-4 text-slate-500 font-medium animate-pulse">
+        Loading All Services...
+      </p>
+    </div> 
   );
 
   return (
