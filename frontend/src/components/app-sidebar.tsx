@@ -43,6 +43,7 @@ interface AppSidebarProps extends React.ComponentProps<"aside"> {
   setCurrentPane: (pane: string) => void;
   onLogout: () => void;
   setOpenProfile: (open: boolean) => void;
+  isOpenProfilePane?: boolean;
 }
 
 // ==========================================
@@ -123,6 +124,7 @@ export function AppSidebar({
   setCurrentPane,
   onLogout,
   setOpenProfile,
+  isOpenProfilePane,
   ...props
 }: AppSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -130,7 +132,10 @@ export function AppSidebar({
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const [isOpenProfile, setOpenProfilePane] = useState<boolean>(false);
+
+  // const profileClosed = () => {
+  //   setOpenProfilePane(false);
+  // };
 
   // Tooltip State
   const [hoveredItem, setHoveredItem] = useState<{
@@ -159,8 +164,8 @@ export function AppSidebar({
     const rect = e.currentTarget.getBoundingClientRect();
     setHoveredItem({
       label,
-      top: rect.top + rect.height / 2, 
-      left: rect.right + 10, 
+      top: rect.top + rect.height / 2,
+      left: rect.right + 10,
     });
   };
 
@@ -175,8 +180,8 @@ export function AppSidebar({
   const role = roleChecker.includes("ADMIN")
     ? "Admin"
     : roleChecker.includes("DENTIST")
-    ? "Dentist"
-    : "Patient";
+      ? "Dentist"
+      : "Patient";
   const initials = userInfo
     ? `${userInfo.firstName[0]}${userInfo.lastName[0]}`.toUpperCase()
     : "GU";
@@ -215,29 +220,38 @@ export function AppSidebar({
       {/* --- Sidebar Container --- */}
       <aside
         className={`
-          relative flex flex-col h-full 
-          bg-white dark:bg-[#111827] 
+          relative flex flex-col h-full
+          bg-white dark:bg-[#111827]
           border-r border-gray-200 dark:border-gray-800
           transition-all duration-300 ease-in-out shadow-xl
           ${isCollapsed ? "w-[80px]" : "w-72"}
         `}
       >
         {/* Toggle Button */}
-        {!isOpenProfile && (
+        {!isOpenProfilePane && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="absolute -right-3 top-9 z-50 w-6 h-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full flex items-center justify-center text-gray-500 hover:text-indigo-600 shadow-sm transition-colors"
           >
-            {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-          </button>  
+            {isCollapsed ? (
+              <ChevronRight size={14} />
+            ) : (
+              <ChevronLeft size={14} />
+            )}
+          </button>
         )}
-        
 
         {/* Company Info */}
         <div className="flex gap-5 items-center flex-row px-4 py-2 border-b border-gray-100 dark:border-gray-800/50">
-          <img alt="Company Logo" src="/logo.png" className="w-15 h-15 rounded-s" />
-          <span className={`text-l font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px] 
-            ${isCollapsed ? 'hidden' : ''}`}>
+          <img
+            alt="Company Logo"
+            src="/logo.png"
+            className="w-15 h-15 rounded-s"
+          />
+          <span
+            className={`text-l font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]
+            ${isCollapsed ? "hidden" : ""}`}
+          >
             Toothalie Dental
           </span>
         </div>
@@ -276,7 +290,7 @@ export function AppSidebar({
                     text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300
                     ${
                       isCollapsed
-                        ? "w-0 ml-0 opacity-0" 
+                        ? "w-0 ml-0 opacity-0"
                         : "w-auto ml-3 opacity-100 delay-75"
                     }
                   `}
@@ -354,8 +368,6 @@ export function AppSidebar({
                     onClick={() => {
                       setOpenProfile(true);
                       setShowProfileMenu(false);
-                      setOpenProfilePane(true)
-                      ;
                     }}
                     className="w-full text-left px-3 py-2 text-sm rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-center gap-3 transition-colors"
                   >
