@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getServices, getDentistServices, updateDentistServices } from '@/API/Authenticated/Dentist/SettingsApi';
+import { getServices, getDentistServices, updateDentistServices } from '@/API/Authenticated/Dentist/SettingsAPI';
 import { Save, AlertCircle, Sparkles, CheckCircle2, Loader2, BriefcaseMedical } from 'lucide-react';
 import Alert from '@/components/_myComp/Alerts';
 

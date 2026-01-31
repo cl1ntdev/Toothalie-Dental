@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getDentistData } from "@/API/Authenticated/GetDentist";
 import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X, User, Mail, Shield } from "lucide-react";
-import { updateSettingsDentist } from "@/API/Authenticated/Dentist/SettingsApi";
+import { updateSettingsDentist } from "@/API/Authenticated/Dentist/SettingsAPI";
 import SettingsService from "./SettingsService";
 import Alert from '@/components/_myComp/Alerts';
 
