@@ -29,31 +29,67 @@ export function LoginForm({
        message: "" 
      });
  
-  useEffect(()=>{
-    const remember = async () => {
-      const userInfoStr = localStorage.getItem('userInfo');
-      if (!userInfoStr) return;
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   
-      const userInfo = JSON.parse(userInfoStr);
-      if (!userInfo?.token) return;
+  useEffect(() => {
+    const checkStoredToken = async () => {
+      setIsCheckingAuth(true); // Start loading
+  
+      const userInfoStr = localStorage.getItem('userInfo');
+      
+      if (!userInfoStr) {
+        setIsCheckingAuth(false); 
+        return;
+      }
+  
+      let token = null;
   
       try {
-        const check = await authenticateUser(userInfo.token);
+        const parsedUser = JSON.parse(userInfoStr);
+        token = parsedUser?.token;
+      } catch (e) {
+        console.error("Local Storage data corrupted, clearing... error",e);
+        localStorage.removeItem('userInfo');
+        setIsCheckingAuth(false);
+        return;
+      }
+  
+      if (!token) {
+        setIsCheckingAuth(false);
+        return;
+      }
+  
+      try {
+        console.log("Validating token...");
+        const check = await authenticateUser(token);
+        
         if (check.status === 'ok') {
-          navigate('/user');
+          console.log("Token valid, redirecting...");
+          navigate('/user'); 
         } else {
-          localStorage.removeItem('userInfo'); // invalidate token
+          console.warn("Token invalid or expired");
+          localStorage.removeItem('userInfo');
+          setIsCheckingAuth(false); // Show login form
         }
       } catch (err) {
-        console.error(err);
+        console.error("Auth Check Error:", err);
         localStorage.removeItem('userInfo');
+        setIsCheckingAuth(false);
       }
-    }
-    remember();
-  }, []);
+    };
+  
+    checkStoredToken();
+  }, [navigate]);
+  
+  useEffect(()=>{
+    setSubmitButton("Login")
+    const reset = setInterval(()=>{
+      setIsWrong(false)
+      clearInterval(reset)
+    },6000)
+  },[isWrong])
+ 
 
-  
-  
   
   const handleLogin = async() =>{
     
@@ -64,7 +100,9 @@ export function LoginForm({
       const userLoginInfo = await LoginAuth(user) // this returns only a token
       console.log(userLoginInfo)
       const userLoginID = userLoginInfo.id
-      if(userLoginInfo.code == 401){
+      // normalize token from different backend shapes
+      const token = userLoginInfo?.token || userLoginInfo?.access_token || userLoginInfo?.data?.token || null;
+      if(userLoginInfo.code == 401 || !token){
         setAlert({
                  show: true,
                  type: "error", // success, error, warning, info
@@ -72,11 +110,21 @@ export function LoginForm({
                  message: "Please input correct information"
                });
         setIsSubmitting(false);
-        
-        
       }else{
-        localStorage.setItem('userInfo',JSON.stringify(userLoginInfo))
-        navigate(`/user`)  
+        // store a consistent shape for later consumers
+        localStorage.setItem('userInfo',JSON.stringify({ token }))
+
+        // validate token immediately before navigating: prevents immediate redirect-backs
+        const validation = await authenticateUser(token);
+        if (validation.status === 'ok') {
+          // optionally persist user details
+          localStorage.setItem('userDetails', JSON.stringify(validation.user));
+          navigate(`/user`);
+        } else {
+          // token rejected by backend
+          localStorage.removeItem('userInfo');
+          setAlert({ show: true, type: 'error', title: 'Authentication Failed', message: 'Unable to validate credentials. Please try again.' });
+        }
       }
             
     }catch(e){
@@ -91,13 +139,13 @@ export function LoginForm({
     setIsSubmitting(false);
   }
   
-  useEffect(()=>{
-    setSubmitButton("Login")
-    const reset = setInterval(()=>{
-      setIsWrong(false)
-      clearInterval(reset)
-    },6000)
-  },[isWrong])
+  if (isCheckingAuth) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p className="text-muted-foreground animate-pulse">Checking credentials...</p>
+      </div>
+    );
+  }
   
   return (
     <form className={cn("flex flex-col gap-6", className)}
