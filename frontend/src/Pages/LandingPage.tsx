@@ -12,6 +12,7 @@ const sectionStateUpdate = () => {
 } 
 
 export default function LandingPage(){
+  localStorage.setItem("theme","light")
   // refs to each section
    const section1Ref = useRef<HTMLDivElement>(null)
    const section2Ref = useRef<HTMLDivElement>(null)
