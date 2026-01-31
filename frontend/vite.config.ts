@@ -14,7 +14,8 @@ export default defineConfig({
    server: {
      host:true,
      allowedHosts: [
-          'uncomplaining-irritative-ranee.ngrok-free.dev'
+       'uncomplaining-irritative-ranee.ngrok-free.dev',
+       'frontend-nine-zeta-40.vercel.app'
       ],
      port: 5173,
      
