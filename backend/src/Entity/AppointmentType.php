@@ -5,23 +5,58 @@ namespace App\Entity;
 use App\Repository\AppointmentTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
+
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[
+    ApiResource(
+        operations: [
+            new Get(),
+            new GetCollection(),
+            // new Post(),
+            // new Put(),
+            // new Delete(),
+        ],
+        normalizationContext: [
+            "groups" => ["appointmenttype:read"],
+        ],
+        denormalizationContext: [
+            "groups" => ["appointmenttype:write"],
+        ],
+    ),
+]
 #[ORM\Entity(repositoryClass: AppointmentTypeRepository::class)]
 class AppointmentType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["appointment:read","appointmenttype:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(["appointment:read","appointmenttype:read"])]
     private ?string $AppointmentName = null;
 
     /**
      * @var Collection<int, Appointment>
      */
-    #[ORM\OneToMany(targetEntity: Appointment::class, mappedBy: 'appointmentType')]
+    #[
+        ORM\OneToMany(
+            targetEntity: Appointment::class,
+            mappedBy: "appointmentType",
+        ),
+    ]
     private Collection $appointments;
 
     public function __construct()

@@ -8,29 +8,60 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+
+#[
+    ApiResource(
+        operations: [
+            new Get(),
+            new GetCollection(),
+            // new Post(),
+            // new Put(),
+            // new Delete(),
+        ],
+        normalizationContext: [
+            "groups" => ["user:read"],
+        ],
+        denormalizationContext: [
+            "groups" => ["user:write"],
+        ],
+    ),
+]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: "UNIQ_IDENTIFIER_EMAIL", fields: ["email"])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["appointment:read","user:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(["appointment:read","user:read"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Groups(["appointment:read","user:read"])]
     private ?string $username = null;
 
     #[ORM\Column]
     private ?string $password = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(["appointment:read","user:read"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(["appointment:read","user:read"])]
     private ?string $lastName = null;
 
     #[ORM\Column(nullable: true)]
@@ -42,13 +73,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, UserRole>
      */
-    #[ORM\ManyToMany(targetEntity: UserRole::class, mappedBy: 'User')]
+    #[ORM\ManyToMany(targetEntity: UserRole::class, mappedBy: "User")]
     private Collection $userRoles;
 
     /**
      * @var Collection<int, DentistService>
      */
-    #[ORM\OneToMany(targetEntity: DentistService::class, mappedBy: 'User')]
+    #[ORM\OneToMany(targetEntity: DentistService::class, mappedBy: "User")]
     private Collection $dentistServices;
 
     #[ORM\Column(nullable: true)]
@@ -60,7 +91,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->dentistServices = new ArrayCollection();
     }
 
-    // ---------- Getters and Setters ----------
 
     public function getId(): ?int
     {
@@ -97,7 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // every user has ROLE_USER
+        $roles[] = "ROLE_USER"; // every user has ROLE_USER
         return array_unique($roles);
     }
 
@@ -109,7 +139,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPassword(): string
     {
-        return $this->password ?? '';
+        return $this->password ?? "";
     }
 
     public function setPassword(string $password): static

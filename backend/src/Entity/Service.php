@@ -7,28 +7,57 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[
+    ApiResource(
+        operations: [
+            new Get(),
+            new GetCollection(),
+            // new Post(),
+            // new Put(),
+            // new Delete(),
+        ],
+        normalizationContext: [
+            "groups" => ["service:read"],
+        ],
+        denormalizationContext: [
+            "groups" => ["service:write"],
+        ],
+    ),
+]
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
 class Service
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["appointment:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(["appointment:read"])]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'services', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: "services", cascade: ["persist"])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["appointment:read"])]
     private ?ServiceType $serviceType = null;
 
-    #[ORM\OneToMany(mappedBy: 'Service', targetEntity: Appointment::class)]
+    #[ORM\OneToMany(mappedBy: "Service", targetEntity: Appointment::class)]
     private Collection $appointments;
 
     /**
      * @var Collection<int, DentistService>
      */
-    #[ORM\ManyToMany(targetEntity: DentistService::class, mappedBy: 'Service')]
+    #[ORM\ManyToMany(targetEntity: DentistService::class, mappedBy: "Service")]
     private Collection $dentistServices;
 
     public function __construct()

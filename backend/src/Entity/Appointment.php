@@ -2,16 +2,46 @@
 
 namespace App\Entity;
 
+use App\Entity\Service;
+
 use App\Repository\AppointmentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
+#[
+    ApiResource(
+        operations: [
+            new Get(),
+            new GetCollection(),
+            new Post(),
+            new Put(),
+            // new Delete(),
+            new Patch(),
+        ],
+        normalizationContext: [
+            "groups" => ["appointment:read"],
+        ],
+        denormalizationContext: [
+            "groups" => ["appointment:write"],
+        ],
+    ),
+]
 #[ORM\Entity(repositoryClass: AppointmentRepository::class)]
 class Appointment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
+    #[Groups(["appointment:read"])]
     private ?int $id = null;
 
     #[
@@ -20,6 +50,7 @@ class Appointment
             options: ["default" => "CURRENT_TIMESTAMP"],
         ),
     ]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?\DateTime $appointmentDate = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -30,6 +61,7 @@ class Appointment
             nullable: false,
         ),
     ]
+    #[Groups(["appointment:read", "appointment:write"])]
     private User $patient;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -40,6 +72,7 @@ class Appointment
             nullable: false,
         ),
     ]
+    #[Groups(["appointment:read", "appointment:write"])]
     private User $dentist;
 
     #[ORM\ManyToOne(targetEntity: Schedule::class, inversedBy: "appointments")]
@@ -50,27 +83,33 @@ class Appointment
             nullable: false,
         ),
     ]
+    #[Groups(["appointment:read", "appointment:write"])]
     private Schedule $schedule;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?bool $Emergency = null;
 
     #[ORM\ManyToOne(inversedBy: "appointments")]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?AppointmentType $appointmentType = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?string $userSetDate = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $Status = null;
+    #[Groups(["appointment:read", "appointment:write"])]
+    private ?string $status = null;
 
     #[ORM\Column(length: 200, nullable: true)]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?string $message = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?\DateTime $deletedOn = null;
 
-    // 🔹 Correct relation to Service
     #[ORM\ManyToOne(targetEntity: Service::class, inversedBy: "appointments")]
     #[
         ORM\JoinColumn(
@@ -79,6 +118,7 @@ class Appointment
             nullable: true,
         ),
     ]
+    #[Groups(["appointment:read", "appointment:write"])]
     private ?Service $service = null;
 
     // Getters & Setters
@@ -168,12 +208,12 @@ class Appointment
 
     public function getStatus(): ?string
     {
-        return $this->Status;
+        return $this->status;
     }
 
-    public function setStatus(?string $Status): static
+    public function setStatus(?string $status): static
     {
-        $this->Status = $Status;
+        $this->status = $status;
         return $this;
     }
 
@@ -201,12 +241,12 @@ class Appointment
 
     public function getService(): ?Service
     {
-        return $this->Service;
+        return $this->service;
     }
 
-    public function setService(?Service $Service): static
+    public function setService(?Service $service): static
     {
-        $this->Service = $Service;
+        $this->service = $service;
         return $this;
     }
 }

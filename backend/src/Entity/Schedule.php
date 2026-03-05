@@ -6,22 +6,45 @@ use App\Repository\ScheduleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+
+#[
+    ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        // new Post(),
+        // new Put(),
+        // new Delete()
+    ],
+        normalizationContext: ["groups" => ["schedule:read"]],
+        denormalizationContext: ["groups" => ["schedule:write"]],
+    ),
+]
 #[ORM\Entity(repositoryClass: ScheduleRepository::class)]
 class Schedule
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
+    #[Groups(["appointment:read", "schedule:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(["appointment:read", "schedule:read"])]
     private string $dayOfWeek;
 
     #[ORM\Column(length: 20)]
+    #[Groups(["appointment:read", "schedule:read"])]
     private string $timeSlot;
 
-    // 🔗 Many schedules belong to one dentist (now a User)
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[
         ORM\JoinColumn(
@@ -30,6 +53,7 @@ class Schedule
             nullable: false,
         ),
     ]
+    #[Groups(["appointment:read", "schedule:read"])]
     private User $dentist;
 
     #[
@@ -45,8 +69,6 @@ class Schedule
     {
         $this->appointments = new ArrayCollection();
     }
-
-    // 🔹 Getters and Setters
 
     public function getId(): ?int
     {
@@ -112,5 +134,10 @@ class Schedule
             }
         }
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->dayOfWeek . " " . $this->timeSlot;
     }
 }
