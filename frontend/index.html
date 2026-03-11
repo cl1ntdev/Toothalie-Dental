@@ -1,13 +1,77 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Toothalie Dental</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Toothalie Dental</title>
+
+        <!-- Preload critical fonts to improve first render -->
+        <link
+            rel="preload"
+            href="/fonts/Ceramon-DEMO.otf"
+            as="font"
+            type="font/otf"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/Poppins-Regular.ttf"
+            as="font"
+            type="font/ttf"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/Poppins-Bold.ttf"
+            as="font"
+            type="font/ttf"
+            crossorigin
+        />
+
+        <!-- Inline @font-face overrides with local fallbacks and font-display for better UX.
+         These augment the declarations in index.css and ensure the fonts are available
+         even before the external stylesheet is fully processed. -->
+        <style>
+            /* Ceramon (display: swap + local fallbacks) */
+            @font-face {
+                font-family: "Ceramon";
+                src:
+                    local("Ceramon"),
+                    local("Ceramon DEMO"),
+                    url("/fonts/Ceramon-DEMO.otf") format("opentype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            /* Poppins regular */
+            @font-face {
+                font-family: "Poppins";
+                src:
+                    local("Poppins Regular"),
+                    local("Poppins-Regular"),
+                    url("/fonts/Poppins-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            /* Poppins bold */
+            @font-face {
+                font-family: "Poppins";
+                src:
+                    local("Poppins Bold"),
+                    local("Poppins-Bold"),
+                    url("/fonts/Poppins-Bold.ttf") format("truetype");
+                font-weight: 700;
+                font-style: normal;
+                font-display: swap;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>
