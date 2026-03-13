@@ -24,7 +24,7 @@ class LoginAuth extends AbstractController
             $userInput = json_decode($req->getContent(), true);
             $username = $userInput["username"] ?? null;
             $password = $userInput["password"] ?? null;
-
+            
             if (!$username || !$password) {
                 return new JsonResponse([
                     "status" => "error",
@@ -32,14 +32,27 @@ class LoginAuth extends AbstractController
                 ], 400);
             }
 
-            // Fetch user info from DB
-            $user = $connection->fetchAssociative("
-                SELECT id, username, email, password, first_name, last_name
+            $isVerified = $connection->fetchOne("
+                SELECT is_verified
                 FROM user
                 WHERE username = ?
             ", [$username]);
+            
+            // Cast to int to ensure string "0" from DB is caught correctly
+            if ($isVerified === false || (int)$isVerified === 0) {
+                return new JsonResponse([
+                    'status' => "error",
+                    'message' => "User Not Verified"
+                ], 401);
+            } 
 
-            if (!$user) {
+            $userData = $connection->fetchAssociative("
+                SELECT id, username, email, password, first_name, last_name
+                FROM user
+                WHERE username = ? and is_verified = 1
+            ", [$username]);
+
+            if (!$userData) {
                 return new JsonResponse([
                     'status' => "error",
                     'message' => "No user found with that username."
@@ -48,7 +61,8 @@ class LoginAuth extends AbstractController
 
             // Verify password using Symfony hasher
             $dummyUser = new User();
-            $dummyUser->setPassword($user['password']); // set hashed password from DB
+            $dummyUser->setPassword($userData['password']); // set hashed password from DB
+            
             if (!$passwordHasher->isPasswordValid($dummyUser, $password)) {
                 return new JsonResponse([
                     'status' => "error",
@@ -62,26 +76,17 @@ class LoginAuth extends AbstractController
                 FROM role r
                 INNER JOIN user_role ur ON r.id = ur.role_id
                 WHERE ur.user_id = ?
-            ", [$user['id']]);
+            ", [$userData['id']]);
 
             // Create a dummy Symfony User object for JWT
             $symfonyUser = new User();
-            $symfonyUser->setUsername($user['username']);
+            $symfonyUser->setUsername($userData['username']);
             $symfonyUser->setRoles($roles);
 
             $token = $jwtManager->create($symfonyUser);
 
             return new JsonResponse([
-                // "status" => "ok",
-                "token" => $token, // specifically only this will be returnd
-                // "user" => [
-                //     "id" => $user['id'],
-                //     "username" => $user['username'],
-                //     "firstName" => $user['first_name'],
-                //     "lastName" => $user['last_name'],
-                //     "email" => $user['email'],
-                //     "roles" => $roles
-                // ],
+                "token" => $token, 
             ], 200);
 
         } catch (\Exception $e) {
