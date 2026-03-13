@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import Navbar from "./landing_page_sections/Navbar";
+import Navbar from "./PageComponents/Navbar";
 import Hero from "./landing_page_sections/Hero";
 import About from "./landing_page_sections/About";
 import Services from "./landing_page_sections/Services";
 import Testimonials from "./landing_page_sections/Testimonials";
 import StatsCTA from "./landing_page_sections/StatsCTA";
-import Footer from "./landing_page_sections/Footer";
+import Footer from "./PageComponents/Footer";
 import bg from '../assets/bg.webp'
 
 export default function LandingPage() {
@@ -13,6 +13,7 @@ export default function LandingPage() {
     try {
       localStorage.setItem("theme", "light");
     } catch {
+      throw new Error("Noooooo");
     }
 
     

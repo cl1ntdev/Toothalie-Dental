@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react"; 
-import logo from '../../assets/logo.png';
+import { Menu, X } from "lucide-react";
+import logo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,30 +22,40 @@ export default function Navbar() {
     >
       {/* Main Glass Container */}
       <div className="flex items-center justify-between h-16 px-4 md:px-8 rounded-full bg-white/40 backdrop-blur-lg border border-white/50 shadow-sm shadow-slate-200/20 w-full">
-        
         {/* Left Side: Logo */}
         <div className="flex items-center gap-3 flex-1">
-          <img 
-            src={logo} 
-            alt="Toothalie Logo" 
-            className="w-8 h-8 rounded-full object-cover" 
-          />
-          <span className="font-ceramon font-semibold text-xl tracking-tight text-slate-900 hidden sm:block">
-            Toothalie
-          </span>
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src={logo}
+              alt="Toothalie Logo"
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            <span className="font-ceramon font-semibold text-xl tracking-tight text-slate-900 hidden sm:block">
+              Toothalie
+            </span>
+          </Link>
         </div>
 
         {/* Middle: Centered Nav Links (Desktop) */}
         <div className="hidden md:flex items-center justify-center gap-8 flex-1">
-          <a href="#home" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors">
+          <Link
+            to="/"
+            className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
+          >
             Home
-          </a>
-          <a href="#about" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors">
+          </Link>
+          <Link
+            to="/about"
+            className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
+          >
             About
-          </a>
-          <a href="#contacts" className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors">
+          </Link>
+          <Link
+            to="/#contacts"
+            className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
+          >
             Contacts
-          </a>
+          </Link>
         </div>
 
         {/* Right Side: Empty space to maintain perfect center alignment for the links */}
@@ -72,27 +83,27 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="absolute top-20 left-4 right-4 md:hidden bg-white/80 backdrop-blur-xl border border-white/50 shadow-xl rounded-2xl p-4 flex flex-col gap-2 overflow-hidden"
           >
-            <a 
-              href="#home" 
+            <Link
+              to="/"
               onClick={toggleMobileMenu}
               className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
             >
               Home
-            </a>
-            <a 
-              href="#about" 
+            </Link>
+            <Link
+              to="/about"
               onClick={toggleMobileMenu}
               className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
             >
               About
-            </a>
-            <a 
-              href="#contacts" 
+            </Link>
+            <Link
+              to="/#contacts"
               onClick={toggleMobileMenu}
               className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
             >
               Contacts
-            </a>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
