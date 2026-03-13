@@ -14,9 +14,8 @@ class AppointmentLog
     #[ORM\Column]
     private ?int $id = null;
 
-    // 👇 Relation to Appointment entity
     #[ORM\ManyToOne(targetEntity: Appointment::class)]
-    #[ORM\JoinColumn(name: "appointment_id", referencedColumnName: "appointment_id", onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "appointment_id", referencedColumnName: "id", onDelete: "CASCADE")]
     private ?Appointment $appointment = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -44,7 +43,6 @@ class AppointmentLog
         return $this->id;
     }
 
-    // 👇 New getter/setter for appointment relation
     public function getAppointment(): ?Appointment
     {
         return $this->appointment;

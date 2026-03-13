@@ -3,12 +3,14 @@
 namespace App\Controller\API;
 
 use App\Entity\User;
+use App\Service\EmailVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface; // NEW - For generating absolute URLs
 
 final class RegisterUser extends AbstractController
 {
@@ -17,6 +19,7 @@ final class RegisterUser extends AbstractController
         Request $req,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher,
+        EmailVerificationService $emailVerificationService, // ADDED
     ): JsonResponse {
         $data = json_decode($req->getContent(), true);
 
@@ -58,25 +61,55 @@ final class RegisterUser extends AbstractController
         $hashedPassword = $passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
 
+        // Generate verification token
+        $verificationToken = $emailVerificationService->generateVerificationToken();
+        $user->setVerificationToken($verificationToken);
+        $user->setIsVerified(false);
+
         $em->persist($user);
         $em->flush();
+
+        // Generate verification URL
+        $verificationUrl = $this->generateUrl(
+            "app_verify_email",
+            ["token" => $verificationToken],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        // Send verification email
+        $emailVerificationService->sendVerificationEmail(
+            $user,
+            $verificationUrl,
+        );
+
+        $this->addFlash(
+            "success",
+            "Registration successful! Please check your email to verify your account.",
+        );
 
         return new JsonResponse(
             [
                 "status" => "ok",
-                "message" => "User registered successfully",
-                "user" => [
-                    "email" => $email,
-                    "roles" => $role,
-                    "username" => $username,
-                    "first_name" => $firstName,
-                    "last_name" => $lastName,
-                    "created_at" => $user
-                        ->getCreatedAt()
-                        ->format("Y-m-d H:i:s"),
-                ],
+                "message" => "Verification Code Sent",
             ],
             201,
         );
+        // return new JsonResponse(
+        //     [
+        //         "status" => "ok",
+        //         "message" => "User registered successfully",
+        //         "user" => [
+        //             "email" => $email,
+        //             "roles" => $role,
+        //             "username" => $username,
+        //             "first_name" => $firstName,
+        //             "last_name" => $lastName,
+        //             "created_at" => $user
+        //                 ->getCreatedAt()
+        //                 ->format("Y-m-d H:i:s"),
+        //         ],
+        //     ],
+        //     201,
+        // );
     }
 }

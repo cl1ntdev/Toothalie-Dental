@@ -63,6 +63,7 @@ security:
 
         # # public access
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: /verify-email, roles:  }
         # - { path: ^/api/login-auth, roles: PUBLIC_ACCESS }
 
         #  # protected
