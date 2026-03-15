@@ -51,7 +51,7 @@ export default function Navbar() {
             About
           </Link>
           <Link
-            to="/#contacts"
+            to="/contacts"
             className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
           >
             Contacts
@@ -98,7 +98,7 @@ export default function Navbar() {
               About
             </Link>
             <Link
-              to="/#contacts"
+              to="/contacts"
               onClick={toggleMobileMenu}
               className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
             >
