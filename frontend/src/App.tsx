@@ -9,6 +9,7 @@ import UserDashboard from './Pages/Authenticated/UserDashboard';
 import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
 import Unauthorized from './Pages/ErrorRoute/Unauthorized';
 import AboutPage from './Pages/AboutPage';
+import ContactPage from './Pages/ContactPage';
 function App() {
 
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path='/' element={<LandingPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/login' element={<LoginPage />} />
+        <Route path='/contacts' element={<ContactPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/toothalieAdmin' element={<ToothalieAdmin />} />
         <Route path='/unauthorized' element={<Unauthorized />} />
