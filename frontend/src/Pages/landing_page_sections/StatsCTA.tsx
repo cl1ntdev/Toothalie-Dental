@@ -12,7 +12,6 @@ export default function StatsCTA() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          
           {/* Left Column */}
           <div className="flex flex-col justify-between h-full">
             <div>
@@ -32,19 +31,22 @@ export default function StatsCTA() {
                 </h2>
               </motion.div>
 
-              <motion.div
+              {/*<motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex items-center gap-4"
               >
-                <button className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium text-sm transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2">
-                  Get Started <ArrowRight className="w-4 h-4" />
+                <button
+                  className="px-6 md:px-8 py-3 md:py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold text-base md:text-lg transition-all shadow-xl shadow-blue-700/30 flex items-center gap-3 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                  aria-label="Get Started with Toothalie"
+                >
+                  Get Started <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
-              </motion.div>
+              </motion.div>*/}
             </div>
 
-            {/* <motion.div 
+            {/* <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.8 }}
@@ -73,15 +75,16 @@ export default function StatsCTA() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <p className="text-xl text-slate-800 font-medium mb-6 leading-relaxed">
-                We've built a dynamic platform focused on empowering aspiring clinics
-                to master the necessary skills for both launching and scaling.
+              <p className="text-lg md:text-xl text-slate-800 font-medium mb-6 leading-relaxed">
+                We've built a dynamic platform focused on empowering aspiring
+                clinics to master the necessary skills for both launching and
+                scaling.
               </p>
-              <p className="text-base text-slate-600 font-light mb-12 leading-relaxed">
-                Cognizant of the entire spectrum, we meticulously navigate through
-                the phases, commencing from the germination of an idea, extending
-                to the intricate stages of expansion, and resiliently embracing
-                setbacks.
+              <p className="text-sm md:text-base text-slate-600 font-light mb-12 leading-relaxed">
+                Cognizant of the entire spectrum, we meticulously navigate
+                through the phases, commencing from the germination of an idea,
+                extending to the intricate stages of expansion, and resiliently
+                embracing setbacks.
               </p>
             </motion.div>
 
@@ -90,7 +93,7 @@ export default function StatsCTA() {
               {[
                 { value: "10+", label: "Awards Gained" },
                 { value: "20+", label: "Years Experience" },
-                { value: "598+", label: "Happy Clinics" }, 
+                { value: "598+", label: "Happy Clinics" },
               ].map((stat, idx) => (
                 <motion.div
                   key={idx}
@@ -102,12 +105,13 @@ export default function StatsCTA() {
                   <p className="text-4xl md:text-5xl font-bold text-soft-blue mb-2 tracking-tighter">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
+                  <p className="text-sm text-slate-500 font-medium">
+                    {stat.label}
+                  </p>
                 </motion.div>
               ))}
             </div>
           </div>
-          
         </div>
       </div>
     </section>

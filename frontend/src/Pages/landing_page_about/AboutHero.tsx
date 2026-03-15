@@ -45,7 +45,7 @@ export default function AboutHero() {
               <h4 className="text-gray-900 font-bold text-xl">Dr. Sarah Jenkins</h4>
               <p className="text-gray-500 text-sm mb-4 font-medium">Lead Dentist at Toothalie</p>
               <button className="bg-[#ff6b35] hover:bg-[#e85d2c] transition-colors text-white rounded-full py-2.5 px-2.5 pr-6 flex items-center gap-3 w-full">
-                <div className="bg-white rounded-full p-2">
+                <div className="bg-gray-300 rounded-full p-2">
                   <Phone className="w-4 h-4 text-[#ff6b35] fill-current" />
                 </div>
                 <span className="font-bold text-sm tracking-wide">+1 (813) 682-7114</span>

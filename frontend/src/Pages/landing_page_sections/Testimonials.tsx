@@ -26,7 +26,7 @@ const personas = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="py-32 font-poppins">
+    <section id="testimonials" className="py-16 md:py-24 lg:py-32 font-poppins">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-16 mb-24">
           <div className="lg:col-span-4 flex flex-col justify-between">
@@ -51,39 +51,39 @@ export default function Testimonials() {
           </div>
 
           <div className="lg:col-span-8">
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 leading-tight tracking-tight font-ceramon">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light text-gray-900 leading-snug tracking-tight font-ceramon">
               I conducted a detailed audience analysis to{" "}
               <span className="font-medium">
                 align the clinic's website UX with the real needs
               </span>
               , motivations, and expectations{" "}
-              <span className="text-soft-blue">of patients</span> seeking premium
-              implants and other advanced dental services.
+              <span className="text-soft-blue">of patients</span> seeking
+              premium implants and other advanced dental services.
             </h3>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {personas.map((persona) => (
             <motion.div
               key={persona.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-[#eef2f6] rounded-3xl p-8"
+              className="bg-[#eef2f6] rounded-3xl p-6 md:p-8 flex flex-col min-h-[280px]"
             >
               <div className="flex items-center gap-4 mb-8">
                 <img
                   src={persona.avatar}
                   alt={persona.name}
-                  className="w-14 h-14 rounded-full object-cover grayscale"
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover grayscale"
                   referrerPolicy="no-referrer"
                 />
                 <div>
-                  <h4 className="font-medium text-gray-900 text-lg">
+                  <h4 className="font-medium text-gray-900 text-base md:text-lg">
                     {persona.name}
                   </h4>
-                  <p className="text-xs text-gray-500 whitespace-pre-line leading-tight">
+                  <p className="text-xs md:text-sm text-gray-500 whitespace-pre-line leading-tight">
                     {persona.role}
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export default function Testimonials() {
                 <h5 className="text-sm font-medium text-gray-900 mb-2">
                   Profile
                 </h5>
-                <p className="text-xs text-gray-700 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   {persona.profile}
                 </p>
               </div>
@@ -102,7 +102,7 @@ export default function Testimonials() {
                 <h5 className="text-sm font-medium text-gray-900 mb-2">
                   Pain points
                 </h5>
-                <p className="text-xs text-gray-700 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   {persona.painPoints}
                 </p>
               </div>
@@ -120,28 +120,28 @@ export default function Testimonials() {
             <ul className="space-y-6">
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
-                <p className="text-xs text-gray-300 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-300 leading-relaxed">
                   Understand the quality and reliability of treatments through
                   clear visuals, patient stories, and doctor credentials
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
-                <p className="text-xs text-gray-300 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-300 leading-relaxed">
                   Easily access pricing, treatment options, and appointment
                   booking in one or two steps
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
-                <p className="text-xs text-gray-300 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-300 leading-relaxed">
                   Feel trust and safety through transparent, respectful
                   communication.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
-                <p className="text-xs text-gray-300 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-300 leading-relaxed">
                   Recognize the clinic as a premium, technology-driven yet
                   caring dental provider.
                 </p>
