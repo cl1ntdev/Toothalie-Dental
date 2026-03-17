@@ -9,26 +9,30 @@ import card4 from "../../assets/card4.webp";
 const services = [
   {
     id: "01",
-    title: "Experienced\nSpecialists",
-    description: "Highly trained professionals dedicated to your oral health.",
+    title: "General Dentistry",
+    description:
+      "Routine exams, professional cleanings, and preventive care that keep every Toothalie patient healthy year-round.",
     imgsource: card1,
   },
   {
     id: "02",
-    title: "Personalized\nApproach",
-    description: "Tailored treatment plans for every patient.",
+    title: "Cosmetic Dentistry",
+    description:
+      "Whitening, bonding, and custom veneers designed to match facial aesthetics while protecting natural enamel.",
     imgsource: card2,
   },
   {
     id: "03",
-    title: "Advanced\nTechnologies",
-    description: "State-of-the-art equipment for precise diagnostics.",
+    title: "Implantology & Restorative",
+    description:
+      "Single-tooth implants and full-arch solutions planned with 3D CT scanning for long-lasting comfort and function.",
     imgsource: card3,
   },
   {
     id: "04",
-    title: "High Safety\nStandards",
-    description: "Strict sterilization protocols and safety measures.",
+    title: "Endodontics & Emergency Care",
+    description:
+      "Rapid pain relief, root canal therapy, and same-day urgent visits supported by digital records and secure follow-ups.",
     imgsource: card4,
   },
 ];

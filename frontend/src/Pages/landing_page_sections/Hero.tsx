@@ -6,7 +6,6 @@ import Aurora from "../../components/Aurora";
 export default function Hero() {
   return (
     <section className="relative min-h-[80vh] md:min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-24 font-poppins isolate bg-white/50">
-      
       <div className="absolute inset-0 w-full h-full -z-10 pointer-events-none">
         <Aurora
           colorStops={["#ffffff", "#bae6fd", "#0ea5e9"]}
@@ -124,7 +123,7 @@ export default function Hero() {
       >
         <p className="text-xs text-gray-500">Platform</p>
       </motion.div>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -132,8 +131,9 @@ export default function Hero() {
         className="relative md:absolute bottom-6 md:bottom-12 z-20 flex flex-col items-center gap-4 w-full md:w-auto px-4 md:px-0"
       >
         <p className="text-sm md:text-base text-gray-600 max-w-md text-center">
-          Toothalie is your comprehensive dental online booking and records
-          system.
+          Toothalie Dental Clinic offers secure online booking, fast digital
+          records, and truly personalized treatment plans so your care fits your
+          schedule.
         </p>
         <button className="w-full md:w-auto px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-full font-medium text-base md:text-lg tracking-wide transition-all shadow-xl hover:from-blue-700 hover:to-cyan-600 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-200">
           Book an Appointment

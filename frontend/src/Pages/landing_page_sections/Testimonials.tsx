@@ -4,23 +4,39 @@ import { ArrowDown } from "lucide-react";
 const personas = [
   {
     id: 1,
-    name: "Johann, 70",
-    role: "Retired engineer,\nbased in Prague",
-    avatar: "https://picsum.photos/seed/johann/100/100",
+    name: "Anna M., 38",
+    role: "Graphic designer — Prague",
+    avatar: "https://picsum.photos/seed/anna/100/100",
     profile:
-      "Financially independent, prioritizes comfort, quality, and privacy. Views oral health as an investment in his image and wellbeing. Prefers premium materials, European-level standards, and tailored care.",
+      "Busy creative who needs flexible scheduling, visual proof of results, and transparent pricing before committing to care.",
     painPoints:
-      "Avoids clinics that feel commercial or pushy. Dislikes medical jargon and overly complex booking processes. Worries about procedure safety, recovery time, and hidden fees. Needs simple, step-by-step guidance and reassurance of premium quality.",
+      "Long phone queues and vague treatment timelines. Wants secure online booking plus clear aftercare instructions she can revisit.",
+    testimonial:
+      '"Toothalie let me book in minutes and every veneer step was explained with visuals. I finally love how my smile looks on camera."',
   },
   {
     id: 2,
-    name: "Klara, 32",
-    role: "Marketing specialist,\nbased in Warsaw",
-    avatar: "https://picsum.photos/seed/klara/100/100",
+    name: "Marek P., 59",
+    role: "Self-employed consultant — Warsaw",
+    avatar: "https://picsum.photos/seed/marek/100/100",
     profile:
-      "Cares deeply about appearance and confidence. Leads an active lifestyle, works remotely, and prefers brands that reflect quality and professionalism. Researches clinics online, pays attention to reviews, certifications, and real patient stories.",
+      "Plans treatments around client meetings, prioritizes longevity and comfort of implants, and expects measurable follow-up.",
     painPoints:
-      "Gets frustrated by outdated websites, unclear treatment stages, and hidden costs. Feels anxious about dental procedures and wants reassurance through expert explanations and realistic visuals. Seeks a clinic that combines advanced technology with a human touch.",
+      "Uncertain recovery times and hidden fees. Needs honest timelines and clinicians who track healing digitally.",
+    testimonial:
+      '"My implant felt stable quickly, and the team checked in through the Toothalie portal so I never wondered if I was healing right."',
+  },
+  {
+    id: 3,
+    name: "Ewa S., 27",
+    role: "Primary school teacher — Katowice",
+    avatar: "https://picsum.photos/seed/ewa/100/100",
+    profile:
+      "Research-driven, anxious about pain, and comforted by empathetic explanations and before/after comparisons.",
+    painPoints:
+      "Overwhelming jargon and cold clinic atmospheres. Wants calming guidance and easy access to her records.",
+    testimonial:
+      '"They walked me through every step, shared realistic before-and-afters, and the secure records mean I always know what\'s next."',
   },
 ];
 
@@ -98,12 +114,21 @@ export default function Testimonials() {
                 </p>
               </div>
 
-              <div>
+              <div className="mb-6">
                 <h5 className="text-sm font-medium text-gray-900 mb-2">
                   Pain points
                 </h5>
                 <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                   {persona.painPoints}
+                </p>
+              </div>
+
+              <div>
+                <h5 className="text-sm font-medium text-gray-900 mb-2">
+                  Quote
+                </h5>
+                <p className="text-sm md:text-base text-gray-800 leading-relaxed italic">
+                  {persona.testimonial}
                 </p>
               </div>
             </motion.div>

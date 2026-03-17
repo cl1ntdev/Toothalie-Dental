@@ -21,55 +21,54 @@ export default function Navbar() {
       aria-label="Main navigation"
     >
       {/* Main Glass Container */}
-      <div className="flex items-center justify-between h-16 px-4 md:px-8 rounded-full bg-white/40 backdrop-blur-lg border border-white/50 shadow-sm shadow-slate-200/20 w-full">
+      <div className="flex items-center justify-between h-14 px-5 md:px-8 rounded-full bg-white/60 backdrop-blur-md border border-slate-100/50 shadow-sm w-full">
+        
         {/* Left Side: Logo */}
-        <div className="flex items-center gap-3 flex-1">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src={logo}
-              alt="Toothalie Logo"
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <span className="font-ceramon font-semibold text-xl tracking-tight text-slate-900 hidden sm:block">
-              Toothalie
-            </span>
-          </Link>
-        </div>
-
-        {/* Middle: Centered Nav Links (Desktop) */}
-        <div className="hidden md:flex items-center justify-center gap-8 flex-1">
-          <Link
-            to="/"
-            className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
-          >
-            Home
-          </Link>
-          <Link
-            to="/about"
-            className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
-          >
-            About
-          </Link>
-          <Link
-            to="/contacts"
-            className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors"
-          >
-            Contacts
-          </Link>
-        </div>
-
-        {/* Right Side: Empty space to maintain perfect center alignment for the links */}
-        <div className="hidden md:block flex-1"></div>
-
-        {/* Mobile Menu Toggle Button */}
-        <div className="md:hidden flex flex-1 justify-end">
+        <Link to="/" className="flex items-center gap-2.5">
+          <img
+            src={logo}
+            alt="Toothalie Logo"
+            className="w-7 h-7 rounded-full object-cover"
+          />
+          <span className="font-ceramon font-medium text-lg tracking-tight text-slate-900 hidden sm:block">
+            Toothalie
+          </span>
+        </Link>
+      
+        {/* Right Side: Nav Links & Mobile Menu */}
+        <div className="flex items-center gap-6">
+          
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link
+              to="/"
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              to="/about"
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              to="/contacts"
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              Contacts
+            </Link>
+          </div>
+      
+          {/* Mobile Menu Toggle Button */}
           <button
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
-            className="p-2 rounded-full text-slate-700 hover:bg-white/50 transition-colors"
+            className="md:hidden p-1.5 -mr-1.5 text-slate-500 hover:text-slate-900 transition-colors"
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
+          
         </div>
       </div>
 

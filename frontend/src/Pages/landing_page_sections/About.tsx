@@ -57,9 +57,9 @@ export default function About() {
               className="text-2xl md:text-3xl lg:text-4xl font-light text-gray-900 leading-tight tracking-tight"
             >
               <span className="font-medium">Toothalie creates smiles</span> that
-              unite the precision of{" "}
-              <span className="text-soft-blue">premium implantology</span> with
-              the elegance of personalized care.
+              unite precise clinical care with modern digital convenience —
+              secure patient records, streamlined booking, and personalized
+              treatment plans.
             </motion.p>
           </div>
         </div>

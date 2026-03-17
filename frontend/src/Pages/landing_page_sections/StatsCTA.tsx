@@ -91,9 +91,9 @@ export default function StatsCTA() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 pt-8 border-t border-slate-200">
               {[
-                { value: "10+", label: "Awards Gained" },
-                { value: "20+", label: "Years Experience" },
-                { value: "598+", label: "Happy Clinics" },
+                { value: "25,000+", label: "Patients treated" },
+                { value: "12+", label: "Years of care" },
+                { value: "4.9/5", label: "Average patient rating" },
               ].map((stat, idx) => (
                 <motion.div
                   key={idx}

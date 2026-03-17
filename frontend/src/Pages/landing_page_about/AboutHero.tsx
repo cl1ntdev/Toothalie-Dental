@@ -1,9 +1,9 @@
-import { Phone } from 'lucide-react';
+import { ShieldCheck,Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import mypic from '../../assets/mypic.webp'
 export default function AboutHero() {
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-gray-900">
+    <section className="relative h-screen w-full overflow-hidden bg-white">
       <img 
         src={mypic}
         alt="Dental Surgery" 
@@ -33,23 +33,20 @@ export default function AboutHero() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-white rounded-[32px] p-3 flex items-center gap-5 shadow-2xl w-full md:w-auto"
+            className="bg-white/95 backdrop-blur-md rounded-[32px] p-6 flex flex-col gap-4 shadow-2xl w-full md:w-[340px] relative z-10"
           >
-            <img 
-              src="https://picsum.photos/seed/dentist-avatar/200/200" 
-              alt="Dr. Sarah Jenkins" 
-              className="w-28 h-28 rounded-[24px] object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="pr-6 py-2">
-              <h4 className="text-gray-900 font-bold text-xl">Dr. Sarah Jenkins</h4>
-              <p className="text-gray-500 text-sm mb-4 font-medium">Lead Dentist at Toothalie</p>
-              <button className="bg-[#ff6b35] hover:bg-[#e85d2c] transition-colors text-white rounded-full py-2.5 px-2.5 pr-6 flex items-center gap-3 w-full">
-                <div className="bg-gray-300 rounded-full p-2">
-                  <Phone className="w-4 h-4 text-[#ff6b35] fill-current" />
-                </div>
-                <span className="font-bold text-sm tracking-wide">+1 (813) 682-7114</span>
-              </button>
+           
+            
+            <div>
+              <h4 className="text-slate-900 font-bold text-xl mb-1">Our Philosophy</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                We believe dentistry should be painless, transparent, and tailored to you. We utilize cutting-edge technology to prioritize your comfort and long-term oral health.
+              </p>
+            </div>
+          
+            <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-slate-900 bg-slate-100 py-2 px-4 rounded-full w-max">
+              <ShieldCheck className="w-4 h-4 text-slate-700" />
+              <span>Certified Professionals</span>
             </div>
           </motion.div>
 
