@@ -1,6 +1,6 @@
 export async function registerUser(
   email: string,
-  role: string[],
+  // role: string[],
   password: string,
   username: string,
   first_name: string,
@@ -8,7 +8,7 @@ export async function registerUser(
   created_at: string,
 ) {
   console.log(email);
-  console.log(role);
+  // console.log(role);
   console.log(password);
   console.log(username);
   console.log(first_name);
@@ -20,7 +20,7 @@ export async function registerUser(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
-      role,
+      // role,
       password,
       username,
       first_name,

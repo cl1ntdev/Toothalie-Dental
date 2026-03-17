@@ -46,11 +46,11 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
     
 
     const created_at = new Date().toISOString()
-    const role = ["ROLE_PATIENT"] 
+    // const role = ["ROLE_PATIENT"] 
 
     const res = await registerUser(
       form.email,
-      role,
+      // role,
       form.password,
       form.username,
       form.first_name,

@@ -25,7 +25,7 @@ final class RegisterUser extends AbstractController
 
         $required = [
             "email",
-            "role",
+            // "role",
             "password",
             "username",
             "first_name",
@@ -44,7 +44,8 @@ final class RegisterUser extends AbstractController
         }
 
         $email = $data["email"];
-        $role = is_array($data["role"]) ? $data["role"] : [$data["role"]];
+        // $role = is_array($data["role"]) ? $data["role"] : [$data["role"]];
+        $role = ["ROLE_PATIENT"];
         $password = $data["password"];
         $username = $data["username"];
         $firstName = $data["first_name"];
