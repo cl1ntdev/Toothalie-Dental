@@ -24,6 +24,7 @@ import { MyProfile } from "./Panes/All/MyProfile";
 import { MyAdmin } from "./Panes/Admin/MyAdmin";
 import Logs from "./Panes/Admin/Logs";
 import Schedule from "./Panes/Admin/Schedule";
+import Estrellanes from "./Panes/Midterm_Requirement/Estrellanes";
 
 // Sidebar Imports
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -243,6 +244,8 @@ export default function UserDashboard() {
           return <UpcomingAppointment />;
         case "History":
           return <HistoryPane />;
+        case "Estrellanes":
+          return <Estrellanes />
         default:
           return <UpcomingAppointment />;
       }

@@ -11,6 +11,7 @@ import {
   Calendar,
   LayoutDashboard,
   Users,
+  PersonStanding,
   NotebookPen,
   Clock,
   TableOfContents,
@@ -59,6 +60,7 @@ export const DentistDashboard: NavItem[] = [
 export const PatientDashboard: NavItem[] = [
   { label: "Appointments", icon: Calendar, key: "Appointments" },
   { label: "History", icon: History, key: "History" },
+  { label: "Estrellanes", icon: PersonStanding, key: "Estrellanes" },
 ];
 
 export const AdminDashboard: NavItem[] = [
