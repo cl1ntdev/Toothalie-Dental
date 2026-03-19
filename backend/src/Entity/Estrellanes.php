@@ -30,6 +30,7 @@ use ApiPlatform\Metadata\Delete;
     ]
 )]
 #[ORM\Entity(repositoryClass: EstrellanesRepository::class)]
+#[ORM\Table(name: 'Estrellanes')]
 class Estrellanes
 {
     #[ORM\Id]
