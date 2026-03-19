@@ -5,37 +5,53 @@ import Aurora from "../../components/Aurora";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[80vh] md:min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-24 font-poppins isolate bg-white/50">
+    <section className="relative min-h-[80vh] md:min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-20 font-poppins isolate bg-white/50">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+              @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+            `,
+        }}
+      />
       <div className="absolute inset-0 w-full h-full -z-10 pointer-events-none">
         <Aurora
           colorStops={["#ffffff", "#bae6fd", "#0ea5e9"]}
           blend={2}
           amplitude={2}
-          speed={0.4}
+          speed={1.1}
         />
       </div>
 
-      <div className="absolute top-[15%] w-full text-center z-20 flex flex-col items-center px-4 pointer-events-none">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-[clamp(1.75rem,8vw,4.5rem)] md:text-[10vw] leading-none font-light tracking-tight text-slate-800 uppercase text-center md:text-left font-ceramon"
-        >
-          Experience{" "}
-          <span className="text-blue-600 font-medium">Dental Care</span>
-        </motion.h1>
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-[clamp(1.25rem,6.5vw,3.5rem)] md:text-[7.5vw] leading-none font-bold tracking-tight text-slate-900 uppercase mt-[-1%] text-center md:text-left font-ceramon"
-        >
-          That Makes You Smile
-        </motion.h1>
-      </div>
+      <div className="absolute top-[15%] w-full text-center z-20 flex flex-col items-center px-4 pointer-events-none font-['Plus_Jakarta_Sans',_sans-serif]">
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-[clamp(1.75rem,8vw,4.5rem)] md:text-[10vw] leading-none font-light tracking-tight text-slate-800 uppercase text-center md:text-left"
+              >
+                Experience{" "}
+                <span className="text-blue-600 font-['Playfair_Display',_serif] font-semibold italic capitalize tracking-normal">
+                  Dental Care
+                </span>
+              </motion.h1>
+      
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+                // Changed to medium weight, removed uppercase, and softened the color
+                className="text-[clamp(1.25rem,6.5vw,3.5rem)] md:text-[7.5vw] leading-[1.1] font-medium tracking-tight text-slate-600 mt-2 md:mt-0 text-center md:text-left"
+              >
+                that makes you{" "}
+                {/* Applied the fancy font, italicized it, and added a fresh gradient */}
+                <span className="font-['Playfair_Display',_serif] font-bold italic text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400 pr-2">
+                  smile.
+                </span>
+              </motion.h1>
+            </div>
 
-      <div className="relative z-30 mt-[10vh] flex flex-col items-center">
+      <div className="relative z-30 mb-[5vh] flex flex-col items-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
