@@ -10,6 +10,7 @@ import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
 import Unauthorized from './Pages/ErrorRoute/Unauthorized';
 import AboutPage from './Pages/AboutPage';
 import ContactPage from './Pages/ContactPage';
+import Estrellanes from './Pages/Authenticated/Panes/Midterm_Requirement/Estrellanes';
 function App() {
 
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/toothalieAdmin' element={<ToothalieAdmin />} />
         <Route path='/unauthorized' element={<Unauthorized />} />
+        <Route path='/midterm-project' element={<Estrellanes />} />
        
        
         <Route path='/user' element={
