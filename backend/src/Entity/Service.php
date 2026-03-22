@@ -43,7 +43,7 @@ class Service
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(["appointment:read"])]
+    #[Groups(["appointment:read","service:read"])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: "services", cascade: ["persist"])]
