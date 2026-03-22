@@ -2,8 +2,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import tooth from "../../assets/tooth.webp";
 import Aurora from "../../components/Aurora";
-
+import { useNavigate } from "react-router-dom";
 export default function Hero() {
+  const navigate = useNavigate();
+
   return (
     <section className="relative min-h-[100svh] flex flex-col items-center justify-center overflow-hidden pt-10 md:pt-20 font-poppins isolate bg-white/50">
       <style
@@ -153,7 +155,9 @@ export default function Hero() {
           records, and truly personalized treatment plans so your care fits your
           schedule.
         </p>
-        <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-full font-medium text-base md:text-lg tracking-wide transition-all shadow-xl hover:shadow-blue-200/50 hover:-translate-y-1 active:scale-95">
+        <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-full font-medium text-base md:text-lg tracking-wide transition-all shadow-xl hover:shadow-blue-200/50 hover:-translate-y-1 active:scale-95"
+          onClick={() => navigate("/login")}
+        >
           Book an Appointment
         </button>
       </motion.div>

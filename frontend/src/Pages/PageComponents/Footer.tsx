@@ -1,6 +1,35 @@
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Footer() {
+  const navigate = useNavigate();
+
+  const navigateTo = (path: string, id?: string) => {
+    try {
+      // For contact page we prefer a query param so the page can read it
+      const target = id && path === '/contact' ? `${path}?open=${id}` : id ? `${path}#${id}` : path;
+      navigate(target);
+
+      if (typeof document !== 'undefined' && id) {
+        let attempts = 0;
+        const tryScroll = () => {
+          attempts += 1;
+          const el = document.getElementById(id);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (attempts < 12) {
+            setTimeout(tryScroll, 120);
+          }
+        };
+        setTimeout(tryScroll, 150);
+      } else if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } catch (e) {
+      // graceful fallback
+      window.location.href = id ? `${path}#${id}` : path;
+    }
+  };
   return (
     <footer className="bg-[#1a1a1a] text-gray-300 py-16 relative overflow-hidden font-poppins">
       {/* Background sketch placeholder */}
@@ -14,47 +43,72 @@ export default function Footer() {
           <div>
             <h2 className="font-ceramon text-3xl text-white mb-6 tracking-widest">TOOTHALIE</h2>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Twitter className="w-4 h-4" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Linkedin className="w-4 h-4" />
               </a>
             </div>
           </div>
 
           <div>
-            <h4 className="font-ceramon italic text-xl text-white mb-6">Information</h4>
+            <h4 className="font-ceramon italic text-xl text-white mb-6">Quick Links</h4>
             <ul className="space-y-3 text-xs text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Store Location</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Product Categories</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">FAQs</a></li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/')} className="hover:text-white transition-colors">Home</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/about')} className="hover:text-white transition-colors">About</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/', 'services')} className="hover:text-white transition-colors">Services</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/', 'testimonials')} className="hover:text-white transition-colors">Testimonials</button>
+              </li>
+              <li>
+                 <button type="button" onClick={() => navigateTo('/contacts')} className="hover:text-white transition-colors">Contact</button>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-ceramon italic text-xl text-white mb-6">Our Services</h4>
+            <h4 className="font-ceramon italic text-xl text-white mb-6">About Sections</h4>
             <ul className="space-y-3 text-xs text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Delivery</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Return Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Purchase History</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Customer Service</a></li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/about', 'mission')} className="hover:text-white transition-colors">Mission</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/about', 'problems')} className="hover:text-white transition-colors">Problems</button>
+              </li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/about', 'testimonials')} className="hover:text-white transition-colors">Testimonials</button>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-ceramon italic text-xl text-white mb-6">Contact Us</h4>
+            <h4 className="font-ceramon italic text-xl text-white mb-6">Contact Sections</h4>
             <ul className="space-y-3 text-xs text-gray-400">
-              <li>Main store: PO Box 1622 Colins Street West<br/>Victoria 8077 Australia</li>
-              <li>Phone Number: +012 345 6789</li>
-              <li>Email: info@toothalie.com</li>
+              <li>
+                <button type="button" onClick={() => navigateTo('/contacts', 'forms')} className="hover:text-white transition-colors">Contact Form</button>
+              </li>
+              <li>
+                 <button type="button" onClick={() => navigateTo('/contacts', 'gmail')} className="hover:text-white transition-colors">Email</button>
+              </li>
+              <li>
+                 <button type="button" onClick={() => navigateTo('/contacts', 'phone')} className="hover:text-white transition-colors">Phone</button>
+              </li>
+              <li>
+                 <button type="button" onClick={() => navigateTo('/contacts', 'location')} className="hover:text-white transition-colors">Location</button>
+              </li>
             </ul>
           </div>
 

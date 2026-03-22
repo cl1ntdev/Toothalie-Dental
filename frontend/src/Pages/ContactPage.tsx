@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from "motion/react";
+import locationPic from '../assets/location.png';
 import {
   MessageSquare,
   Mail,
@@ -27,7 +29,31 @@ import SendForm from "../API/SendForm";
 
 export default function ContactPage() {
   // null means no card is expanded (shows the 3x2 grid)
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>("forms");
+  const location = useLocation();
+
+  // Watch for ?open=... query param or hash and open the corresponding card
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      const open = params.get('open');
+      if (open) {
+        // validate against known methods
+        const valid = contactMethods.some((m) => m.id === open);
+        if (valid) setExpandedId(open);
+        return;
+      }
+
+      // fallback to hash (legacy)
+      if (location.hash) {
+        const id = location.hash.replace('#', '');
+        const valid = contactMethods.some((m) => m.id === id);
+        if (valid) setExpandedId(id);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [location.search, location.hash]);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -111,6 +137,7 @@ export default function ContactPage() {
 
             return (
               <motion.div
+                id={method.id}
                 layout
                 key={method.id}
                 onClick={() => {
@@ -313,7 +340,7 @@ export default function ContactPage() {
                               </h3>
                               <div className="flex-1 bg-white/50 rounded-2xl overflow-hidden relative border border-blue-100 shadow-sm group min-h-[250px]">
                                 <img
-                                  src="https://picsum.photos/seed/dental-clinic-map/800/600"
+                                  src={locationPic}
                                   alt="Map Location"
                                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 absolute inset-0"
                                   referrerPolicy="no-referrer"

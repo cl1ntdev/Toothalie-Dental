@@ -77,7 +77,7 @@ export default function AboutTestimonials() {
   };
 
   return (
-    <section className="bg-[#f4f5f7] py-12 md:py-24 overflow-hidden">
+    <section id="testimonials" className="bg-[#f4f5f7] py-12 md:py-24 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-16 gap-6">

@@ -16,7 +16,7 @@ export default function AboutProblems() {
   ];
 
   return (
-    <section className="bg-[#f8f9fa] py-20 md:py-32 relative overflow-hidden">
+    <section id="problems" className="bg-[#f8f9fa] py-20 md:py-32 relative overflow-hidden">
       {/* Soft blue radial gradients */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-400/10 blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-indigo-400/10 blur-[120px] rounded-full pointer-events-none" />

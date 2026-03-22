@@ -16,7 +16,7 @@ const WireframeFlower = ({ className }: { className?: string }) => (
 
 export default function AboutMission() {
   return (
-    <section className="relative py-20 md:py-40 overflow-hidden bg-[#F8F9FA]">
+    <section id="mission" className="relative py-20 md:py-40 overflow-hidden bg-[#F8F9FA]">
       
       {/* Dynamic Gradient Background */}
       <div className="absolute inset-0 z-0">
