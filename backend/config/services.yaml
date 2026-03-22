@@ -18,6 +18,10 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: "../src/"
+    
+    App\Controller\API\SendForm:
+        arguments:
+            $brevoApiKey: '%env(BREVO_API_KEY)%'
 
     # # Doctrine DBAL Connection service
     # Doctrine\DBAL\Connection:

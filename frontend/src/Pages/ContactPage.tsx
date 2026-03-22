@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   MessageSquare,
@@ -23,10 +23,48 @@ const contactMethods = [
   { id: "facebook", title: "Facebook", icon: Facebook },
   { id: "instagram", title: "Instagram", icon: Instagram },
 ];
+import SendForm from "../API/SendForm";
 
 export default function ContactPage() {
   // null means no card is expanded (shows the 3x2 grid)
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const updateField = (field: string, value: string) =>
+    setForm((prev) => ({ ...prev, [field]: value }));
+
+  async function handleSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    // Simple validation
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      setError("Please complete all fields before sending.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      console.log('send form')
+      const resp = await SendForm(form);
+
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body.message || `Request failed (${resp.status})`);
+      }
+
+      setSuccess("Message sent successfully! We'll get back to you soon.");
+      setForm({ name: "", email: "", message: "" });
+    } catch (err: any) {
+      setError(err?.message || "Unable to send message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 font-poppins pt-24 flex flex-col relative overflow-hidden">
@@ -154,33 +192,67 @@ export default function ContactPage() {
                           className="absolute inset-0 flex flex-col p-6 lg:p-10 overflow-y-auto hide-scrollbar"
                         >
                           {method.id === "forms" && (
-                            <div className="flex flex-col h-full w-full text-gray-900 max-w-2xl mx-auto">
+                            <form
+                              onSubmit={handleSubmit}
+                              className="flex flex-col h-full w-full text-gray-900 max-w-2xl mx-auto"
+                            >
                               <h3 className="text-3xl font-ceramon mb-6 flex items-center gap-3">
                                 <MessageSquare className="text-blue-500" /> Send
                                 us a message
                               </h3>
+
+                              {error && (
+                                <div className="mb-4 rounded-md bg-red-50 border border-red-100 text-red-700 px-4 py-3">
+                                  {error}
+                                </div>
+                              )}
+
+                              {success && (
+                                <div className="mb-4 rounded-md bg-emerald-50 border border-emerald-100 text-emerald-700 px-4 py-3">
+                                  {success}
+                                </div>
+                              )}
+
                               <div className="flex flex-col gap-4 flex-1">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <input
                                     type="text"
                                     placeholder="Your Name"
+                                    value={form.name}
+                                    onChange={(e) => updateField("name", e.target.value)}
                                     className="bg-white/50 border border-blue-100 shadow-sm rounded-xl p-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white transition-colors w-full"
                                   />
                                   <input
                                     type="email"
                                     placeholder="Your Email"
+                                    value={form.email}
+                                    onChange={(e) => updateField("email", e.target.value)}
                                     className="bg-white/50 border border-blue-100 shadow-sm rounded-xl p-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white transition-colors w-full"
                                   />
                                 </div>
                                 <textarea
                                   placeholder="How can we help you?"
+                                  value={form.message}
+                                  onChange={(e) => updateField("message", e.target.value)}
                                   className="bg-white/50 border border-blue-100 shadow-sm rounded-xl p-4 text-gray-900 placeholder-gray-400 flex-1 resize-none focus:outline-none focus:border-blue-400 focus:bg-white transition-colors w-full min-h-[150px]"
                                 ></textarea>
-                                <button className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium py-4 rounded-xl hover:from-blue-600 hover:to-cyan-600 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 w-full mt-auto">
-                                  <Send size={18} /> Send Message
-                                </button>
+
+                                <div className="mt-2">
+                                  <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`w-full inline-flex items-center justify-center gap-2 py-4 rounded-xl font-medium text-white shadow-md transition-all ${
+                                      loading
+                                        ? "bg-blue-300 cursor-wait"
+                                        : "bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                                    }`}
+                                  >
+                                    <Send size={18} />
+                                    {loading ? "Sending…" : "Send Message"}
+                                  </button>
+                                </div>
                               </div>
-                            </div>
+                            </form>
                           )}
 
                           {method.id === "gmail" && (
@@ -199,7 +271,7 @@ export default function ContactPage() {
                               </p>
                               <div className="bg-white/60 border border-blue-100 shadow-sm rounded-2xl p-8 flex flex-col items-center gap-6 w-full max-w-md">
                                 <span className="text-2xl font-light tracking-wide text-gray-900">
-                                  hello@toothalie.com
+                                  toothalieclean@gmail.com
                                 </span>
                                 <button className="bg-gradient-to-r from-red-500 to-orange-500 text-white font-medium py-3 px-8 rounded-xl hover:from-red-600 hover:to-orange-600 shadow-md hover:shadow-lg transition-all flex items-center gap-2 w-full justify-center">
                                   <Copy size={18} /> Copy Address
@@ -224,7 +296,7 @@ export default function ContactPage() {
                               </p>
                               <div className="bg-white/60 border border-blue-100 shadow-sm rounded-2xl p-8 flex flex-col items-center gap-6 w-full max-w-md">
                                 <span className="text-3xl font-light tracking-wide text-gray-900">
-                                  +1 (555) 123-4567
+                                  +63 0912 345 6789 
                                 </span>
                                 <button className="bg-gradient-to-r from-emerald-400 to-green-600 text-white font-medium py-3 px-8 rounded-xl hover:from-emerald-500 hover:to-green-700 shadow-md hover:shadow-lg transition-all flex items-center gap-2 w-full justify-center">
                                   <Phone size={18} /> Call Now
@@ -248,10 +320,10 @@ export default function ContactPage() {
                                 />
                                 <div className="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-white via-white/90 to-transparent">
                                   <p className="text-2xl font-light mb-1 text-gray-900">
-                                    123 Dental Avenue
+                                    123 Pogi Street
                                   </p>
                                   <p className="text-gray-600 mb-6">
-                                    Health District, NY 10001
+                                    Dumaguete City, Negros Oriental 6200
                                   </p>
                                   <button className="bg-gradient-to-r from-teal-500 to-blue-500 text-white font-medium py-3 px-6 rounded-xl hover:from-teal-600 hover:to-blue-600 shadow-md hover:shadow-lg transition-all flex items-center gap-2 w-max">
                                     <MapPin size={18} /> Get Directions

@@ -16,9 +16,9 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-poppins">
+    <div className="min-h-screen bg-white font-poppins flex flex-col">
       <Navbar />
-      <main id="about" className="overflow-x-hidden">
+      <main id="about" className="flex-1 overflow-x-hidden w-full">
         <AboutHero />
         <AboutMission />
         <AboutProblems />

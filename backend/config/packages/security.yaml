@@ -15,6 +15,12 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        contact_form:
+            pattern: ^/api/send-form
+            methods: [POST, OPTIONS] # <--- Add OPTIONS here
+            security: false  # This completely disables security for this route
+            stateless: true 
+        
         login:
             provider: app_user_provider
             pattern: ^/api/login-auth
@@ -42,6 +48,8 @@ security:
                 - App\Security\GoogleAuthenticator
 
     access_control:
+        - { path: ^/api/send-form, roles: PUBLIC_ACCESS }
+        - { path: ^/connect/google, roles: PUBLIC_ACCESS }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: /verify-email, roles: PUBLIC_ACCESS }
