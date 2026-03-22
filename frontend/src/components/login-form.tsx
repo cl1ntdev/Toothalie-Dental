@@ -104,8 +104,8 @@ export function LoginForm({
         setAlert({
             show: true,
             type: "error", 
-            title: "Invalid Credentials",
-            message: "Please input correct information"
+            title: "Login Error",
+            message: userLoginInfo.message || "Invalid username or password. Please try again."
         });
         setIsSubmitting(false);
         return; 
