@@ -60,7 +60,7 @@ export const DentistDashboard: NavItem[] = [
 export const PatientDashboard: NavItem[] = [
   { label: "Appointments", icon: Calendar, key: "Appointments" },
   { label: "History", icon: History, key: "History" },
-  { label: "Estrellanes", icon: PersonStanding, key: "Estrellanes" },
+  // { label: "Estrellanes", icon: PersonStanding, key: "Estrellanes" },
 ];
 
 export const AdminDashboard: NavItem[] = [
@@ -390,7 +390,7 @@ export function AppSidebar({
             )}
           </div>
         </div>
-        <div className="p-4 border-t border-gray-100 dark:border-gray-800">
+        {/* <div className="p-4 border-t border-gray-100 dark:border-gray-800">
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             className={`
@@ -426,7 +426,6 @@ export function AppSidebar({
               </span>
             </div>
 
-            {/* Toggle Switch Visual */}
             {!isCollapsed && (
               <div
                 className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${
@@ -442,7 +441,7 @@ export function AppSidebar({
               </div>
             )}
           </button>
-        </div>
+        </div> */}
       </aside>
     </div>
   );
