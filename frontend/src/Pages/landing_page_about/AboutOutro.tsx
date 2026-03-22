@@ -1,14 +1,13 @@
 import { motion } from 'motion/react';
-import { Image as ImageIcon, Bookmark, Link as LinkIcon } from 'lucide-react';
 
 export default function AboutOutro() {
   return (
-    <section className="bg-[#FAFAFA] py-40 relative overflow-hidden flex flex-col items-center justify-center min-h-[80vh]">
+    <section className="bg-[#FAFAFA] py-20 sm:py-32 md:py-40 relative overflow-hidden flex flex-col items-center justify-center min-h-[50vh] md:min-h-[80vh]">
 
-      {/* Background Wireframe - Softened for light mode */}
+      {/* Background Wireframe */}
       <svg 
         viewBox="0 0 100 100" 
-        className="absolute top-10 left-10 w-[400px] h-[400px] text-blue-600 opacity-[0.08]" 
+        className="absolute top-5 left-5 md:top-10 md:left-10 w-[150px] h-[150px] md:w-[400px] md:h-[400px] text-blue-600 opacity-[0.08]" 
         fill="none" 
         stroke="currentColor" 
         strokeWidth="0.15"
@@ -20,33 +19,36 @@ export default function AboutOutro() {
         <circle cx="50" cy="50" r="5" />
       </svg>
 
-      {/* Decorative Gradient Blur - Adds "airiness" */}
-      <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-50 rounded-full blur-[120px] opacity-60 pointer-events-none" />
-
       {/* Main Content */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="z-10 text-center relative w-full max-w-5xl mx-auto px-4"
+        className="z-10 text-left relative w-full max-w-7xl mx-auto px-5 sm:px-10 md:px-20"
       >
-        <h2 className="text-5xl md:text-7xl lg:text-[90px] text-slate-800 font-extralight tracking-tight leading-[1.05] text-left md:ml-32">
-          A SMILE<br/>
-          <span className="ml-12 md:ml-32 font-medium text-blue-600/90 italic">EVERYONE</span>
-          <br/>
-          <span className="ml-12 md:ml-48">WILL NEVER FORGET</span>
+        <h2 className="text-[13vw] sm:text-[10vw] md:text-8xl lg:text-[110px] text-slate-800 font-extralight tracking-tighter leading-[0.9] uppercase flex flex-col">
+          
+          <span className="block">Defining the</span>
+          
+          <span className="block ml-[15%] sm:ml-[20%] font-medium text-blue-600/90 italic lowercase font-serif pr-4 leading-tight">
+            standard
+          </span>
+          
+          <span className="block ml-[5%] sm:ml-[10%] md:ml-[30%]">
+            of modern care
+          </span>
         </h2>
         
-        {/* Subtle Year Marker */}
-        <div className="absolute right-10 top-1/2 text-slate-400 font-mono text-xs tracking-widest vertical-text">
-          EST. 2026
+        {/* Subtle Year Marker - Rotated for that high-end look */}
+        <div className="absolute -right-2 md:right-10 top-1/2 -translate-y-1/2 text-slate-300 font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase hidden xs:block [writing-mode:vertical-lr] rotate-180">
+          Toothalie Clinic — Est. 2026
         </div>
       </motion.div>
 
-      {/* Huge Faded Background Text - Now in a soft gray */}
-      <div className="absolute bottom-[-2%] left-0 w-full text-center设备 overflow-hidden pointer-events-none">
-        <span className="text-[18vw] font-black text-slate-200/40 whitespace-nowrap tracking-tighter uppercase">
+      {/* Huge Faded Background Text */}
+      <div className="absolute bottom-[-2%] left-0 w-full text-center overflow-hidden pointer-events-none select-none">
+        <span className="text-[25vw] font-black text-slate-200/40 whitespace-nowrap tracking-tighter uppercase inline-block leading-none">
           Toothalie
         </span>
       </div>

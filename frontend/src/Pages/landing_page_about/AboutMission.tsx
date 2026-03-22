@@ -16,7 +16,7 @@ const WireframeFlower = ({ className }: { className?: string }) => (
 
 export default function AboutMission() {
   return (
-    <section className="relative py-40 overflow-hidden bg-[#F8F9FA]">
+    <section className="relative py-20 md:py-40 overflow-hidden bg-[#F8F9FA]">
       
       {/* Dynamic Gradient Background */}
       <div className="absolute inset-0 z-0">
@@ -30,7 +30,7 @@ export default function AboutMission() {
       <WireframeFlower className="absolute -bottom-40 -right-20 w-[800px] h-[800px] text-slate-400 opacity-[0.07]" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex justify-between text-[10px] text-slate-400 mb-24 uppercase tracking-[0.3em] font-medium">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between text-[10px] text-slate-400 mb-12 md:mb-24 uppercase tracking-[0.3em] font-medium">
           <span className="flex items-center gap-2">
             <span className="w-8 h-[1px] bg-slate-300" /> 01 THE GENESIS
           </span>
