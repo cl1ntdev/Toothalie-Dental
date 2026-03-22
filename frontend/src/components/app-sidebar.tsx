@@ -313,10 +313,12 @@ export function AppSidebar({
 
         <div className="px-4 py-8 border-b border-gray-100 dark:border-gray-800/50">
           <div className="relative" ref={profileRef}>
+            {/* Profile Trigger Button */}
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
               className={`
                 group relative flex items-center w-full outline-none transition-all duration-300
+                hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 -mx-2 rounded-xl
                 ${isCollapsed ? "justify-center flex-col" : "justify-start gap-3"}
               `}
             >
@@ -340,12 +342,12 @@ export function AppSidebar({
                   flex flex-col items-start transition-all duration-300 overflow-hidden whitespace-nowrap
                   ${
                     isCollapsed
-                      ? "w-0 h-0 opacity-0" // added h-0 to fully collapse vertical space in flex-col
+                      ? "w-0 h-0 opacity-0"
                       : "w-auto h-auto opacity-100 delay-75"
                   }
                 `}
               >
-                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
+                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[150px]">
                   {displayName}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400 font-medium capitalize">
@@ -354,18 +356,34 @@ export function AppSidebar({
               </div>
             </button>
 
-            {/* Profile Dropdown */}
+            {/* Profile Dropdown (Now popping UP) */}
             {showProfileMenu && (
               <div
                 className={`
-                absolute left-0 z-50 mt-2 w-56
-                bg-white dark:bg-[#1f2937] rounded-xl shadow-xl shadow-black/10
-                border border-gray-100 dark:border-gray-700 overflow-hidden
-                animate-in fade-in zoom-in-95 duration-100 origin-top-left
-                ${isCollapsed ? "left-14 -top-2" : "top-full"}
-              `}
+                  absolute z-50 w-56 p-1.5
+                  bg-white dark:bg-[#1f2937] rounded-xl shadow-xl shadow-black/10
+                  border border-gray-100 dark:border-gray-700 overflow-hidden
+                  animate-in fade-in zoom-in-95 duration-150
+                  ${
+                    isCollapsed 
+                      ? "left-14 bottom-0 origin-bottom-left slide-in-from-left-2" 
+                      : "bottom-full mb-3 left-0 origin-bottom-left slide-in-from-bottom-2"
+                  }
+                `}
               >
-                <div className="p-2 space-y-1">
+                {/* Context Header */}
+                {!isCollapsed && (
+                  <div className="px-3 py-2 mb-1 border-b border-gray-100 dark:border-gray-700/50">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      {displayName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
+                      {role}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-0.5">
                   <button
                     onClick={() => {
                       setOpenProfile(true);
@@ -373,17 +391,19 @@ export function AppSidebar({
                     }}
                     className="w-full text-left px-3 py-2 text-sm rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-center gap-3 transition-colors"
                   >
-                    <Edit size={16} /> Edit Profile
+                    <Edit size={16} className="text-gray-400 dark:text-gray-400" /> 
+                    <span>Edit Profile</span>
                   </button>
-                  <div className="h-px bg-gray-100 dark:bg-gray-700 my-1" />
+                  
                   <button
                     onClick={() => {
                       setShowProfileMenu(false);
                       setShowLogoutConfirmation(true);
                     }}
-                    className="w-full text-left px-3 py-2 text-sm rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-3 transition-colors mt-1"
                   >
-                    <LogOut size={16} /> Logout
+                    <LogOut size={16} className="text-red-500 dark:text-red-400" /> 
+                    <span>Logout</span>
                   </button>
                 </div>
               </div>
