@@ -10,6 +10,7 @@ import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
 import Unauthorized from './Pages/ErrorRoute/Unauthorized';
 import AboutPage from './Pages/AboutPage';
 import ContactPage from './Pages/ContactPage';
+import AuthCallback from './Pages/Auth/AuthCallback';
 import Estrellanes from './Pages/Authenticated/Panes/Midterm_Requirement/Estrellanes';
 function App() {
 
@@ -25,7 +26,7 @@ function App() {
         <Route path='/toothalieAdmin' element={<ToothalieAdmin />} />
         <Route path='/unauthorized' element={<Unauthorized />} />
         <Route path='/midterm-project' element={<Estrellanes />} />
-       
+        <Route path="/auth/callback" element={<AuthCallback />} />
        
         <Route path='/user' element={
           <ProtectedRoute allowedRoles={["ROLE_PATIENT","ROLE_DENTIST"]}>

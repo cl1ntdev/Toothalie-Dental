@@ -11,7 +11,6 @@ import {
   AlertCircle 
 } from "lucide-react";
 
-// API Imports
 import LoginAuth from "@/API/LoginAuth";
 import { UserLoginInfoClass } from "@/Classes/UserLogin";
 import { authenticateUser } from "@/API/AuthenticateUser";
@@ -19,11 +18,9 @@ import { authenticateUser } from "@/API/AuthenticateUser";
 export default function ToothalieAdmin() {
   const navigate = useNavigate();
 
-  // Form State
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   
-  // UI State
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -31,7 +28,7 @@ export default function ToothalieAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrorMessage(null); // Clear previous errors
+    setErrorMessage(null); 
 
     try {
       console.log("Login attempt:", { username });
@@ -43,15 +40,12 @@ export default function ToothalieAdmin() {
         throw new Error("Invalid credentials");
       }
 
-      // Success Logic
       const token = result.token;
       localStorage.setItem("userInfo", JSON.stringify({ token }));
       
-      // Fetch user details
       const userDetails = await authenticateUser(token);
       localStorage.setItem("userDetails", JSON.stringify(userDetails));
 
-      // Redirect
       navigate("/admin");
 
     } catch (error) {
