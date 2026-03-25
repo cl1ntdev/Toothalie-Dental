@@ -2,7 +2,7 @@ const getAll = async () => {
   const result = await fetch('/api/estrellanes', {
     method: "GET",
     headers: {
-      "Content-Type": "application/ld+json" // API Platform typically expects this
+      "Accept": "application/ld+json"
     },
   });
   return await result.json();
@@ -12,7 +12,7 @@ const getOne = async (id) => {
   const result = await fetch(`/api/estrellanes/${id}`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/ld+json"
+      "Accept": "application/ld+json"
     },
   });
   return await result.json();
@@ -33,7 +33,7 @@ const update = async (id, data) => {
   const result = await fetch(`/api/estrellanes/${id}`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/ld+json" 
+      "Content-Type": "application/ld+json"
     },
     body: JSON.stringify(data)
   });
@@ -44,7 +44,7 @@ const remove = async (id) => {
   const result = await fetch(`/api/estrellanes/${id}`, {
     method: "DELETE",
     headers: {
-      "Content-Type": "application/ld+json"
+      "Accept": "application/ld+json"
     },
   });
   if (result.status === 204) {
@@ -54,13 +54,6 @@ const remove = async (id) => {
 }
 
 export default async function EstrellanesAPI({ req_method, id = null, data = null }) {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const token = userInfo?.token; 
-
-  if (!token) {
-    throw new Error("Authentication token is missing.");
-  }
-
   switch (req_method) {
     case "GET_ALL":
       return await getAll();

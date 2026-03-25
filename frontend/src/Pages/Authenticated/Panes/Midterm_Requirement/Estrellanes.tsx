@@ -8,6 +8,9 @@ interface EstrellanesItem {
   id?: number;
   name: string;
   "@id"?: string;
+  age?: number | null;
+  yr_lvl?: number | null;
+  course?: string | null;
 }
 
 export default function Estrellanes() {
@@ -138,6 +141,12 @@ export default function Estrellanes() {
                   {m.name}
                 </p>
 
+                <p className="text-sm text-gray-500 mt-1 truncate">{m.course ?? '—'}</p>
+                <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
+                  <span>Age: {m.age ?? '—'}</span>
+                  <span>Year: {m.yr_lvl ?? '—'}</span>
+                </div>
+
                 <div className="absolute -bottom-1 -right-1 w-12 h-12 bg-indigo-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none -z-10" />
               </div>
             );
@@ -156,6 +165,9 @@ export default function Estrellanes() {
         <CrudModal
           id={openID}
           name={currentData.name}
+          age={currentData.age ?? null}
+          yr_lvl={currentData.yr_lvl ?? null}
+          course={currentData.course ?? null}
           onClose={() => setIsEditModalOpen(false)}
           onSuccess={fetchData}
         />

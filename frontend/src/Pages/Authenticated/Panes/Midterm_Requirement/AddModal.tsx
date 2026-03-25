@@ -9,6 +9,9 @@ interface AddModalProps {
 
 export default function AddModal({ isOpen, onClose, onSuccess }: AddModalProps) {
   const [name, setName] = useState("");
+  const [age, setAge] = useState<number | "">("");
+  const [yrLvl, setYrLvl] = useState<number | "">("");
+  const [course, setCourse] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -26,9 +29,17 @@ export default function AddModal({ isOpen, onClose, onSuccess }: AddModalProps) 
     try {
       await EstrellanesAPI({
         req_method: "POST",
-        data: { name: name.trim() },
+        data: { 
+          name: name.trim(),
+          age: age === "" ? null : Number(age),
+          yr_lvl: yrLvl === "" ? null : Number(yrLvl),
+          course: course.trim() || null
+        },
       });
       setName(""); // Clear input on success
+      setAge("");
+      setYrLvl("");
+      setCourse("");
       onSuccess(); // Refresh the list
       onClose();   // Close the modal
     } catch (error: any) {
@@ -60,17 +71,57 @@ export default function AddModal({ isOpen, onClose, onSuccess }: AddModalProps) 
           </div>
         )}
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={isProcessing}
-            className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
-            placeholder="Enter new record name"
-            autoFocus
-          />
+        <div className="mb-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isProcessing}
+              className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+              placeholder="Enter new record name"
+              autoFocus
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <input
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value === "" ? "" : Number(e.target.value))}
+                disabled={isProcessing}
+                className="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none"
+                placeholder="e.g. 20"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Year Level</label>
+              <input
+                type="number"
+                value={yrLvl}
+                onChange={(e) => setYrLvl(e.target.value === "" ? "" : Number(e.target.value))}
+                disabled={isProcessing}
+                className="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none"
+                placeholder="e.g. 3"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+            <input
+              type="text"
+              value={course}
+              onChange={(e) => setCourse(e.target.value)}
+              disabled={isProcessing}
+              className="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none"
+              placeholder="e.g. Computer Science"
+            />
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 mt-2">

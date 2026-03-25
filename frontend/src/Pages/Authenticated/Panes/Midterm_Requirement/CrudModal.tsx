@@ -7,13 +7,28 @@ interface CrudModalProps {
   onClose: () => void;
   // Added an optional callback so the parent component knows when to refresh the list
   onSuccess?: () => void; 
+  age?: number | null;
+  yr_lvl?: number | null;
+  course?: string | null;
 }
 
-export default function CrudModal({ id, name, onClose, onSuccess }: CrudModalProps) {
+export default function CrudModal({ id, name, onClose, onSuccess, age: initialAge, yr_lvl: initialYrLvl, course: initialCourse }: CrudModalProps) {
   // State for form data, loading UI, and error handling
   const [recordName, setRecordName] = useState(name);
+  const [age, setAge] = useState<number | "">("");
+  const [yrLvl, setYrLvl] = useState<number | "">("");
+  const [course, setCourse] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    setRecordName(name);
+  }, [name]);
+  React.useEffect(() => {
+    setAge(typeof initialAge === 'number' ? initialAge : (initialAge === null ? "" : initialAge));
+    setYrLvl(typeof initialYrLvl === 'number' ? initialYrLvl : (initialYrLvl === null ? "" : initialYrLvl));
+    setCourse(initialCourse ?? "");
+  }, [initialAge, initialYrLvl, initialCourse]);
 
   const handleUpdate = async () => {
     setIsProcessing(true);
@@ -22,7 +37,12 @@ export default function CrudModal({ id, name, onClose, onSuccess }: CrudModalPro
       await EstrellanesAPI({
         req_method: "PUT",
         id: id,
-        data: { name: recordName },
+        data: { 
+          name: recordName,
+          age: age === "" ? null : Number(age),
+          yr_lvl: yrLvl === "" ? null : Number(yrLvl),
+          course: course?.trim() || null
+        },
       });
       if (onSuccess) onSuccess(); 
       onClose(); 
@@ -92,9 +112,7 @@ export default function CrudModal({ id, name, onClose, onSuccess }: CrudModalPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input
               type="text"
               value={recordName}
@@ -102,6 +120,41 @@ export default function CrudModal({ id, name, onClose, onSuccess }: CrudModalPro
               disabled={isProcessing}
               className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow outline-none"
               placeholder="Enter record name"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <input
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value === "" ? "" : Number(e.target.value))}
+                disabled={isProcessing}
+                className="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Year Level</label>
+              <input
+                type="number"
+                value={yrLvl}
+                onChange={(e) => setYrLvl(e.target.value === "" ? "" : Number(e.target.value))}
+                disabled={isProcessing}
+                className="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+            <input
+              type="text"
+              value={course}
+              onChange={(e) => setCourse(e.target.value)}
+              disabled={isProcessing}
+              className="w-full p-2.5 bg-white border border-gray-300 rounded-lg outline-none"
             />
           </div>
         </div>
