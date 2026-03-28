@@ -30,7 +30,7 @@ export default function AboutProblems() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-start mb-16 md:mb-32">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-light text-[#1a2b2b] leading-tight tracking-tight">
-            Does this sound<br/>familiar?
+            Our team is dedicated<br/>to solve these problems
           </h2>
           <p className="text-blue-200/50 text-3xl md:text-5xl font-bold uppercase tracking-widest mt-8 md:mt-0">
             Typical Problems
