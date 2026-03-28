@@ -50,7 +50,7 @@ class DeleteAppointmentAPI extends AbstractController
 
             $connection->update(
                 'appointment',
-                ['deleted_on' => new \DateTime()->format('Y-m-d H:i:s')],
+                ['deleted_on' =>(new \DateTime())->format('Y-m-d H:i:s')],
                 ['id' => $appointmentID]
             );
 

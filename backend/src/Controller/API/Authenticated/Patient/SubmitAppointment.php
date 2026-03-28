@@ -107,7 +107,7 @@ class SubmitAppointment extends AbstractController
                     "message" => $message,
                     "service_id" => $serviceID,
                 ]),
-                "logged_at" => new \DateTime()->format("Y-m-d H:i:s"),
+                "logged_at" => (new \DateTime())->format('Y-m-d H:i:s'),
             ]);
 
             // Log to activity log

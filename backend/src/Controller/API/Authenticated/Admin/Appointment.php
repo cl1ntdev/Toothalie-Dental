@@ -167,7 +167,7 @@ class Appointment extends AbstractController
                 "service_id" => isset($data["service_id"])
                     ? (int) $data["service_id"]
                     : null,
-                "appointment_date" => new \DateTime()->format("Y-m-d H:i:s"),
+                "appointment_date" => (new \DateTime())->format('Y-m-d H:i:s'),
             ];
 
             if (!empty($insertData["service_id"])) {

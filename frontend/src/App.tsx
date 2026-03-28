@@ -4,7 +4,7 @@ import LandingPage from './Pages/LandingPage'
 import { Routes, Route } from "react-router-dom";
 import LoginPage from './Pages/Auth/LoginPage';
 import  RegisterPage  from './Pages/Auth/RegisterPage';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/protectedRoute';
 import UserDashboard from './Pages/Authenticated/UserDashboard';
 import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
 import Unauthorized from './Pages/ErrorRoute/Unauthorized';
