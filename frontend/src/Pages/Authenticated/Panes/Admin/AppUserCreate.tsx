@@ -1,84 +1,127 @@
-import React, { useEffect, useState } from 'react';
-import { X, Plus, Loader2, Eye, EyeOff } from 'lucide-react';
-import { createUser } from '@/API/Authenticated/admin/AppUser';
+import React, { useEffect, useState } from "react";
+import { X, Plus, Loader2, Eye, EyeOff } from "lucide-react";
+import { createUser } from "@/API/Authenticated/admin/AppUser";
 
+interface UserRole {
+  label: string;
+  value: string;
+}
 
-export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
+interface AppUserCreateProps {
+  onClose: () => void;
+  onSuccess?: (res: unknown) => void;
+  userRolesValues: UserRole[];
+}
+
+export default function AppUserCreate({
+  onClose,
+  onSuccess,
+  userRolesValues,
+}: AppUserCreateProps) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [userRoles, setUserRoles] = useState<[]>(userRolesValues)
-  
-  useEffect(()=>{
-    setUserRoles(userRolesValues)
-    console.log("Roles here are 1 ",userRolesValues);
-  },[userRolesValues])
-   
+  const [userRoles, setUserRoles] = useState<UserRole[]>(userRolesValues);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setUserRoles(userRolesValues);
+    console.log("Roles here are 1 ", userRolesValues);
+  }, [userRolesValues]);
+
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    username: '',
-    password: '',
-    roles: 'DENTIST',
+    first_name: "",
+    last_name: "",
+    email: "",
+    username: "",
+    password: "",
+    roles: "DENTIST",
+    is_verified: false,
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     const payload = {
       ...formData,
-      roles: JSON.stringify(["ROLE_"+formData.roles]), 
-      disable: null 
+      roles: JSON.stringify(["ROLE_" + formData.roles]),
+      disable: null,
     };
 
     console.log("Creating User Payload:", payload);
 
     try {
-      const res = await createUser(payload); // Actual API call
-      console.log(res)
-     
-      if (onSuccess) onSuccess(); // Refresh table in parent
+      const res = await createUser(payload);
+      console.log(res);
+
+      // Check if response indicates an error
+      if (res && res.status === "error") {
+        setError(res.message || "Faile  d to create user. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      if (onSuccess) onSuccess(res);
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Failed to create user. Please try again.");
-    } finally {
+      // Try to extract error message from response
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to create user. Please try again.";
+      setError(errorMessage);
       setLoading(false);
     }
   };
 
-  
-  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
-        
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b bg-gray-50">
           <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
             <div className="bg-blue-100 p-1.5 rounded-full">
-                <Plus className="text-blue-600 w-5 h-5" />
+              <Plus className="text-blue-600 w-5 h-5" />
             </div>
             Create New User
           </h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-200 rounded-full text-gray-500 transition">
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-200 rounded-full text-gray-500 transition"
+          >
             <X size={20} />
           </button>
         </div>
 
         {/* Body */}
         <div className="p-6">
-          <form id="create-user-form" onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+          {/* Error Message Display */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+
+          <form
+            id="create-user-form"
+            onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
             {/* First Name */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">First Name <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium text-gray-700">
+                First Name <span className="text-red-500">*</span>
+              </label>
               <input
                 name="first_name"
                 value={formData.first_name}
@@ -91,7 +134,9 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
 
             {/* Last Name */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Last Name <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium text-gray-700">
+                Last Name <span className="text-red-500">*</span>
+              </label>
               <input
                 name="last_name"
                 value={formData.last_name}
@@ -104,7 +149,9 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
 
             {/* Username */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Username <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium text-gray-700">
+                Username <span className="text-red-500">*</span>
+              </label>
               <input
                 name="username"
                 value={formData.username}
@@ -125,15 +172,19 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
                 className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
               >
                 {/*<option value="ROLE_USER">User</option>*/}
-                {userRoles.map(role => (
-                  <option key={role.value} value={role.value}>{role.label}</option>
+                {userRoles.map((role) => (
+                  <option key={role.value} value={role.value}>
+                    {role.label}
+                  </option>
                 ))}
               </select>
             </div>
 
             {/* Email */}
             <div className="space-y-1 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700">Email Address <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium text-gray-700">
+                Email Address <span className="text-red-500">*</span>
+              </label>
               <input
                 name="email"
                 type="email"
@@ -147,7 +198,9 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
 
             {/* Password */}
             <div className="space-y-1 md:col-span-2">
-              <label className="text-sm font-medium text-gray-700">Password <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium text-gray-700">
+                Password <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
                 <input
                   name="password"
@@ -171,20 +224,41 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
               </p>*/}
             </div>
 
+            {/* Is Verified Checkbox */}
+            <div className="space-y-1 md:col-span-2 pt-2 border-t mt-2">
+              <label className="text-sm font-medium text-gray-700 block mb-2">
+                Verification Status
+              </label>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="is_verified"
+                  checked={formData.is_verified}
+                  onChange={handleChange}
+                  className="sr-only peer"
+                />
+                <div className="relative w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <span
+                  className={`ms-3 text-sm font-medium ${formData.is_verified ? "text-blue-600" : "text-gray-600"}`}
+                >
+                  {formData.is_verified ? "Verified" : "Not Verified"}
+                </span>
+              </label>
+            </div>
           </form>
         </div>
 
         {/* Footer */}
         <div className="flex justify-end gap-3 p-4 border-t bg-gray-50">
-          <button 
+          <button
             onClick={onClose}
             className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
             disabled={loading}
           >
             Cancel
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             form="create-user-form"
             className="flex items-center gap-2 px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition shadow-sm disabled:opacity-50"
             disabled={loading}
@@ -194,13 +268,10 @@ export default function AppUserCreate({ onClose, onSuccess, userRolesValues }) {
                 <Loader2 size={16} className="animate-spin" /> Creating...
               </>
             ) : (
-              <>
-                Create User
-              </>
+              <>Create User</>
             )}
           </button>
         </div>
-
       </div>
     </div>
   );

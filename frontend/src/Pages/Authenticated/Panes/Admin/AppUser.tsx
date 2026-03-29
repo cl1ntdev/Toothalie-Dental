@@ -15,26 +15,38 @@ import {
   CheckCircle2,
   XCircle,
   Activity,
-  MoreHorizontal,
 } from "lucide-react";
 import AppUserEditModal from "./AppUserEditModal";
 import AppUserCreate from "./AppUserCreate";
 import Alert from "@/components/_myComp/Alerts";
+
+interface RoleData {
+  id: string;
+  role_name: string;
+}
+
+interface RoleResponse {
+  status: string;
+  roles?: RoleData[][];
+}
+
 export default function AppUser() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [roleValues, setRoleValues] = useState<any>({});
+  const [roleValues, setRoleValues] = useState<RoleResponse>(
+    {} as RoleResponse,
+  );
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [IDtoEdit, setIDtoEdit] = useState("");
 
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [IDtoDelete, setIDtoDelete] = useState(null);
+  const [IDtoDelete, setIDtoDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [alert, setAlert] = useState({
     show: false,
@@ -60,8 +72,8 @@ export default function AppUser() {
       const response = await getRoles();
       console.log("roles are ", response);
       setRoleValues(response);
-    } catch (error) {
-      console.error("Failed to fetch roles", error);
+    } catch {
+      console.error("Failed to fetch roles");
     } finally {
       setLoading(false);
     }
@@ -96,13 +108,20 @@ export default function AppUser() {
   // --- HANDLERS ---
   const handleCreate = () => setOpenCreateModal(true);
 
-  const handleCreateSuccess = () => {
+  const handleCreateSuccess = (response: {
+    status: string;
+    message: string;
+  }) => {
     console.log("success");
     setAlert({
       show: true,
-      type: "success", // success, error, warning, info
-      title: "Created Successfully",
-      message: "User added to the system.",
+      type: response.status, // success, error, warning, info
+      title: response.status === "success" ? "User Created" : "Creation Failed",
+      message:
+        response.message ||
+        (response.status === "success"
+          ? "Successfully created a user"
+          : "Failed to create user"),
     });
     setOpenCreateModal(false);
     fetchUsers();
@@ -171,7 +190,7 @@ export default function AppUser() {
         ? parsed.map((r) => r.replace("ROLE_", ""))
         : [roleString];
       return roles.join(", ");
-    } catch (e) {
+    } catch {
       return roleString;
     }
   };
@@ -240,11 +259,14 @@ export default function AppUser() {
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
                 >
-                      <option value="ALL">All Roles</option>
-                  {roleValues.status === "ok" && roleValues.roles && roleValues.roles.length > 0 && (
-                    roleValues.roles[0].map(role => (
-                      <option key={role.id} value={role.role_name}>{role.role_name.replace('ROLE_', '')}</option>
-                    )
+                  <option value="ALL">All Roles</option>
+                  {roleValues.status === "ok" &&
+                    roleValues.roles &&
+                    roleValues.roles.length > 0 &&
+                    roleValues.roles[0].map((role) => (
+                      <option key={role.id} value={role.role_name}>
+                        {role.role_name.replace("ROLE_", "")}
+                      </option>
                     ))}
                 </select>
                 <Filter className="absolute right-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -283,6 +305,7 @@ export default function AppUser() {
                 <th className="px-8 py-5">User Profile</th>
                 <th className="px-6 py-5">Role</th>
                 <th className="px-6 py-5">Status</th>
+                <th className="px-6 py-5">Verification</th>
                 <th className="px-6 py-5">Joined</th>
                 <th className="px-6 py-5 text-right">Actions</th>
               </tr>
@@ -290,6 +313,7 @@ export default function AppUser() {
             <tbody className="divide-y divide-slate-100">
               {filteredUsers.map((user) => {
                 const isDisabled = user.disable == 1;
+                const isVerified = user.is_verified == 1;
                 const roleName = formatRoles(user.roles);
                 return (
                   <tr
@@ -342,6 +366,17 @@ export default function AppUser() {
                       )}
                     </td>
                     <td className="px-6 py-5">
+                      {isVerified ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                          <CheckCircle2 size={12} /> Verified
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
+                          <AlertTriangle size={12} /> Unverified
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-5">
                       <div className="flex items-center gap-2 text-sm text-slate-500 font-sans">
                         <Calendar size={14} className="text-slate-400" />
                         {user.created_at || "N/A"}
@@ -374,6 +409,7 @@ export default function AppUser() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
           {filteredUsers.map((user) => {
             const isDisabled = user.disable == 1;
+            const isVerified = user.is_verified == 1;
             const roleName = formatRoles(user.roles);
             return (
               <div
@@ -441,6 +477,16 @@ export default function AppUser() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-400 text-xs uppercase font-bold tracking-wider">
+                        Verification
+                      </span>
+                      <span
+                        className={`text-xs font-bold px-2 py-1 rounded ${isVerified ? "bg-blue-50 text-blue-700" : "bg-amber-50 text-amber-700"}`}
+                      >
+                        {isVerified ? "Verified" : "Unverified"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-400 text-xs uppercase font-bold tracking-wider">
                         Joined
                       </span>
                       <span className="text-slate-600 font-sans">
@@ -496,7 +542,7 @@ export default function AppUser() {
       {openCreateModal && (
         <AppUserCreate
           onClose={() => setOpenCreateModal(false)}
-          onSuccess={handleCreateSuccess}
+          onSuccess={(res) => handleCreateSuccess(res)}
           userRolesValues={roleOptions}
         />
       )}

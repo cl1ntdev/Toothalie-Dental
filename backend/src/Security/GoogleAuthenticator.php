@@ -23,58 +23,111 @@ class GoogleAuthenticator extends OAuth2Authenticator
     public function __construct(
         private ClientRegistry $clientRegistry,
         private EntityManagerInterface $entityManager,
-        private JWTTokenManagerInterface $jwtManager
-    ) {
-    }
+        private JWTTokenManagerInterface $jwtManager,
+    ) {}
 
     public function supports(Request $request): ?bool
     {
-        return $request->attributes->get('_route') === 'connect_google_check';
+        return $request->attributes->get("_route") === "connect_google_check";
     }
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient('google');
+        $client = $this->clientRegistry->getClient("google");
         $accessToken = $this->fetchAccessToken($client);
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function() use ($accessToken, $client) {
+            new UserBadge($accessToken->getToken(), function () use (
+                $accessToken,
+                $client,
+            ) {
                 /** @var GoogleUser $googleUser */
                 $googleUser = $client->fetchUserFromToken($accessToken);
                 $email = $googleUser->getEmail();
 
-                $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+                $existingUser = $this->entityManager
+                    ->getRepository(User::class)
+                    ->findOneBy(["email" => $email]);
 
                 if (!$existingUser) {
-                    throw new CustomUserMessageAuthenticationException('No account found for this Google email. Please register first.');
+                    $existingUser = new User();
+                    $existingUser->setEmail($email);
+                    $existingUser->setRoles(["ROLE_PATIENT"]);
+                    $googleName = $googleUser->getName();
+                    if ($googleName) {
+                        $existingUser->setUsername(
+                            substr(
+                                preg_replace("/\s+/", "_", $googleName),
+                                0,
+                                100,
+                            ),
+                        );
+                    } else {
+                        $existingUser->setUsername(explode("@", $email)[0]);
+                    }
+
+                    try {
+                        $randomPassword = bin2hex(random_bytes(16));
+                    } catch (\Exception $e) {
+                        $randomPassword = bin2hex(
+                            openssl_random_pseudo_bytes(16),
+                        );
+                    }
+                    $existingUser->setPassword($randomPassword);
+
+                    if (method_exists($googleUser, "getFirstName")) {
+                        $existingUser->setFirstName(
+                            $googleUser->getFirstName(),
+                        );
+                    }
+                    if (method_exists($googleUser, "getLastName")) {
+                        $existingUser->setLastName($googleUser->getLastName());
+                    }
+
+                    $existingUser->setCreatedAt(new \DateTimeImmutable());
+                    $existingUser->setIsVerified(true); 
+                    $this->entityManager->persist($existingUser);
+                    $this->entityManager->flush();
                 }
 
                 if (!$existingUser->isVerified()) {
-                    throw new CustomUserMessageAuthenticationException('Your account is not verified. Please verify your email before logging in.');
+                    throw new CustomUserMessageAuthenticationException(
+                        "Your account is not verified. Please verify your email before logging in.",
+                    );
                 }
 
                 return $existingUser;
-            })
+            }),
         );
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-    {
+    public function onAuthenticationSuccess(
+        Request $request,
+        TokenInterface $token,
+        string $firewallName,
+    ): ?Response {
         $user = $token->getUser();
 
         $jwtToken = $this->jwtManager->create($user);
-        
+
         // Redirect back to the React frontend with the token in the URL parameters
-        $targetUrl = 'http://localhost:5173/auth/callback?token=' . $jwtToken;
+        $targetUrl = "http://localhost:5173/auth/callback?token=" . $jwtToken;
 
         return new RedirectResponse($targetUrl);
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
-    {
-        $message = strtr($exception->getMessageKey(), $exception->getMessageData());
-        
+    public function onAuthenticationFailure(
+        Request $request,
+        AuthenticationException $exception,
+    ): ?Response {
+        $message = strtr(
+            $exception->getMessageKey(),
+            $exception->getMessageData(),
+        );
+
         // Redirect back to React login page with an error
-        return new RedirectResponse('http://localhost:5173/login?error=' . urlencode($message));
+        return new RedirectResponse(
+            "http://localhost:5173/login?error=" . urlencode($message),
+        );
     }
 }

@@ -140,7 +140,7 @@ export default function Hero() {
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
         >
           <p className="text-xs text-gray-500 text-right">Platform</p>
-          <p className="text-sm font-medium text-gray-900 text-right">© 2024</p>
+          <p className="text-sm font-medium text-gray-900 text-right">© 2026</p>
         </motion.div>
       </div>
 
