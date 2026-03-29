@@ -71,9 +71,5 @@ Staff
 
 
 ==============
-- REMINDER and  IN ADMIN
-- in register form there is role presented could be vulnerability
-- Appointment and Schedule renamed in db 
-- default light theme
-
-yeah
+- TESTING
+- MORE SPECIFIC LOGS
