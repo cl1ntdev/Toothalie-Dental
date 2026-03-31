@@ -150,11 +150,7 @@ export default function Hero() {
         transition={{ duration: 0.8, delay: 0.4 }}
         className="relative md:absolute bottom-6 md:bottom-12 z-40 flex flex-col items-center gap-4 w-full md:w-auto px-6 md:px-0"
       >
-        <p className="text-sm md:text-base text-gray-600 max-w-sm md:max-w-md text-center">
-          Toothalie Dental Clinic offers secure online booking, fast digital
-          records, and truly personalized treatment plans so your care fits your
-          schedule.
-        </p>
+       
         <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-full font-medium text-base md:text-lg tracking-wide transition-all shadow-xl hover:shadow-blue-200/50 hover:-translate-y-1 active:scale-95"
           onClick={() => navigate("/login")}
         >

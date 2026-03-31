@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import locationPic from '../assets/location.png';
+import locationPic from "../assets/location.png";
 import {
   MessageSquare,
   Mail,
@@ -36,7 +36,7 @@ export default function ContactPage() {
   useEffect(() => {
     try {
       const params = new URLSearchParams(location.search);
-      const open = params.get('open');
+      const open = params.get("open");
       if (open) {
         // validate against known methods
         const valid = contactMethods.some((m) => m.id === open);
@@ -46,7 +46,7 @@ export default function ContactPage() {
 
       // fallback to hash (legacy)
       if (location.hash) {
-        const id = location.hash.replace('#', '');
+        const id = location.hash.replace("#", "");
         const valid = contactMethods.some((m) => m.id === id);
         if (valid) setExpandedId(id);
       }
@@ -75,7 +75,7 @@ export default function ContactPage() {
 
     setLoading(true);
     try {
-      console.log('send form')
+      console.log("send form");
       const resp = await SendForm(form);
 
       if (!resp.ok) {
@@ -86,7 +86,9 @@ export default function ContactPage() {
       setSuccess("Message sent successfully! We'll get back to you soon.");
       setForm({ name: "", email: "", message: "" });
     } catch (err: any) {
-      setError(err?.message || "Unable to send message. Please try again later.");
+      setError(
+        err?.message || "Unable to send message. Please try again later.",
+      );
     } finally {
       setLoading(false);
     }
@@ -246,21 +248,27 @@ export default function ContactPage() {
                                     type="text"
                                     placeholder="Your Name"
                                     value={form.name}
-                                    onChange={(e) => updateField("name", e.target.value)}
+                                    onChange={(e) =>
+                                      updateField("name", e.target.value)
+                                    }
                                     className="bg-white/50 border border-blue-100 shadow-sm rounded-xl p-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white transition-colors w-full"
                                   />
                                   <input
                                     type="email"
                                     placeholder="Your Email"
                                     value={form.email}
-                                    onChange={(e) => updateField("email", e.target.value)}
+                                    onChange={(e) =>
+                                      updateField("email", e.target.value)
+                                    }
                                     className="bg-white/50 border border-blue-100 shadow-sm rounded-xl p-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white transition-colors w-full"
                                   />
                                 </div>
                                 <textarea
                                   placeholder="How can we help you?"
                                   value={form.message}
-                                  onChange={(e) => updateField("message", e.target.value)}
+                                  onChange={(e) =>
+                                    updateField("message", e.target.value)
+                                  }
                                   className="bg-white/50 border border-blue-100 shadow-sm rounded-xl p-4 text-gray-900 placeholder-gray-400 flex-1 resize-none focus:outline-none focus:border-blue-400 focus:bg-white transition-colors w-full min-h-[150px]"
                                 ></textarea>
 
@@ -323,7 +331,7 @@ export default function ContactPage() {
                               </p>
                               <div className="bg-white/60 border border-blue-100 shadow-sm rounded-2xl p-8 flex flex-col items-center gap-6 w-full max-w-md">
                                 <span className="text-3xl font-light tracking-wide text-gray-900">
-                                  +63 0912 345 6789 
+                                  +63 0912 345 6789
                                 </span>
                                 <button className="bg-gradient-to-r from-emerald-400 to-green-600 text-white font-medium py-3 px-8 rounded-xl hover:from-emerald-500 hover:to-green-700 shadow-md hover:shadow-lg transition-all flex items-center gap-2 w-full justify-center">
                                   <Phone size={18} /> Call Now
@@ -349,6 +357,19 @@ export default function ContactPage() {
                                   <p className="text-2xl font-light mb-1 text-gray-900">
                                     123 Pogi Street
                                   </p>
+                                  <div className="w-full">
+                                    <iframe
+                                      title="Clinic location map"
+                                      width="100%"
+                                      height="600"
+                                      frameBorder="0"
+                                      scrolling="no"
+                                      marginHeight={0}
+                                      marginWidth={0}
+                                      className="w-full rounded-xl"
+                                      src="https://maps.google.com/maps?q=9.309076,123.303247&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                    />
+                                  </div>
                                   <p className="text-gray-600 mb-6">
                                     Dumaguete City, Negros Oriental 6200
                                   </p>
