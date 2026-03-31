@@ -1,11 +1,29 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  
+  const { scrollY } = useScroll();
+
+  /**
+   * Tracks the scroll direction.
+   * If current scroll is greater than previous and beyond a 150px threshold, hide.
+   * If current scroll is less than previous, show.
+   */
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious();
+    if (latest > previous && latest > 150) {
+      setIsHidden(true);
+      setIsMobileMenuOpen(false); // Close mobile menu if user scrolls down
+    } else {
+      setIsHidden(false);
+    }
+  });
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -13,15 +31,18 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      // Removed max-w-5xl and mx-auto, and increased padding slightly for ultra-wide screens
+      // Framer Motion handles the translation based on isHidden state
+      variants={{
+        visible: { y: 0, opacity: 1 },
+        hidden: { y: -100, opacity: 0 },
+      }}
+      animate={isHidden ? "hidden" : "visible"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
       className="fixed top-6 left-0 right-0 z-50 px-4 md:px-8 font-poppins w-full"
       aria-label="Main navigation"
     >
       {/* Main Glass Container */}
-      <div className="flex items-center justify-between h-14 px-5 md:px-8 rounded-full bg-white/60 backdrop-blur-md border border-slate-100/50 shadow-sm w-full">
+      <div className="flex items-center justify-between h-14 px-5 md:px-8 rounded-full bg-white/60 backdrop-blur-md border border-slate-100/50 shadow-sm w-full max-w-7xl mx-auto">
         
         {/* Left Side: Logo */}
         <Link to="/" className="flex items-center gap-2.5">
@@ -40,22 +61,13 @@ export default function Navbar() {
           
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
-            <Link
-              to="/"
-              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-            >
+            <Link to="/" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">
               Home
             </Link>
-            <Link
-              to="/about"
-              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-            >
+            <Link to="/about" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">
               About
             </Link>
-            <Link
-              to="/contacts"
-              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-            >
+            <Link to="/contacts" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">
               Contacts
             </Link>
           </div>
@@ -82,27 +94,16 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="absolute top-20 left-4 right-4 md:hidden bg-white/80 backdrop-blur-xl border border-white/50 shadow-xl rounded-2xl p-4 flex flex-col gap-2 overflow-hidden"
           >
-            <Link
-              to="/"
-              onClick={toggleMobileMenu}
-              className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
-            >
-              Home
-            </Link>
-            <Link
-              to="/about"
-              onClick={toggleMobileMenu}
-              className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
-            >
-              About
-            </Link>
-            <Link
-              to="/contacts"
-              onClick={toggleMobileMenu}
-              className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
-            >
-              Contacts
-            </Link>
+            {["Home", "About", "Contacts"].map((item) => (
+              <Link
+                key={item}
+                to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                onClick={toggleMobileMenu}
+                className="px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-600 hover:bg-white/50 rounded-xl transition-all"
+              >
+                {item}
+              </Link>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
