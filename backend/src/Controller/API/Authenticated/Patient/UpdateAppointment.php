@@ -11,92 +11,108 @@ use App\Service\ActivityLogger;
 
 class UpdateAppointment extends AbstractController
 {
-    // >> >> >> << << << 
-    // 
+    // >> >> >> << << <<
+    //
     // UPDATE APPOINTMENT VALUE BY THE PATIENT
-    // 
-    // >> >> >> << << << 
-    #[Route('/api/update-appointment', name: "update-appointment", methods: ['POST'])]
-    public function updateAppointment(Request $req, Connection $connection, ActivityLogger $logger): JsonResponse
-    {
+    //
+    // >> >> >> << << <<
+    #[
+        Route(
+            "/api/update-appointment",
+            name: "update-appointment",
+            methods: ["POST"],
+        ),
+    ]
+    public function updateAppointment(
+        Request $req,
+        Connection $connection,
+        ActivityLogger $logger,
+    ): JsonResponse {
         try {
             $data = json_decode($req->getContent(), true);
-            $appointmentID = $data['appointmentID'] ?? null;
-            $scheduleID = $data['scheduleID'] ?? null;
-            $date = $data['date'];
-            
-            $emergency = !empty($data['isEmergency']) ? 1 : 0;
-            $appointment_type_id = !empty($data['isFamilyBooking']) ? 2 : 1;
-            $message = $data['message'];
-            
-        
-            
-            
+            $appointmentID = $data["appointmentID"] ?? null;
+            $scheduleID = $data["scheduleID"] ?? null;
+            $date = $data["date"];
+
+            $emergency = !empty($data["isEmergency"]) ? 1 : 0;
+            $appointment_type_id = !empty($data["isFamilyBooking"]) ? 2 : 1;
+            $message = $data["message"];
+
             if (!$appointmentID || !$scheduleID) {
-                return new JsonResponse([
-                    'status' => 'error',
-                    'message' => 'appointmentID and scheduleID are required'
-                ], 400);
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" =>
+                            "appointmentID and scheduleID are required",
+                    ],
+                    400,
+                );
             }
 
             $appointment = $connection->fetchAssociative(
                 "SELECT * FROM appointment WHERE id = ?",
-                [$appointmentID]
+                [$appointmentID],
             );
 
             if (!$appointment) {
-                return new JsonResponse([
-                    'status' => 'error',
-                    'message' => 'Appointment not found'
-                ], 404);
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Appointment not found",
+                    ],
+                    404,
+                );
             }
 
             $connection->update(
-            'appointment',
-               [
-                   'schedule_id' => $scheduleID,
-                   'user_set_date' => $date,
-                   'emergency' => $emergency,
-                   'appointment_type_id'=> $appointment_type_id,
-                   'message'=> $message
-               ],
-                ['id'=>$appointmentID]
+                "appointment",
+                [
+                    "schedule_id" => $scheduleID,
+                    "user_set_date" => $date,
+                    "emergency" => $emergency,
+                    "appointment_type_id" => $appointment_type_id,
+                    "message" => $message,
+                ],
+                ["id" => $appointmentID],
             );
-            
-                       $appointmentAfter = $connection->fetchAssociative(
-                           "SELECT * FROM appointment WHERE id = ?",
-                           [$appointmentID]
-                       );
-           
-                       $connection->insert('appointment_log', [
-                           'id' => $appointmentID,
-                           'actor_type' => 'patient',
-                           'action' => 'update',
-                           'message' => 'Updated appointment details.',
-                           'snapshot' => json_encode([
-                               'before' => $appointment,
-                               'after' => $appointmentAfter
-                           ]),
-                           'logged_at' => (new \DateTime())->format('Y-m-d H:i:s')
-                       ]);
-                       
+
+            $appointmentAfter = $connection->fetchAssociative(
+                "SELECT * FROM appointment WHERE id = ?",
+                [$appointmentID],
+            );
+
+            $connection->insert("appointment_log", [
+                "id" => $appointmentID,
+                "actor_type" => "patient",
+                "action" => "update",
+                "message" => "Updated appointment details.",
+                "snapshot" => json_encode([
+                    "before" => $appointment,
+                    "after" => $appointmentAfter,
+                ]),
+                "logged_at" => new \DateTime()->format("Y-m-d H:i:s"),
+            ]);
+
             // Log to activity log
             $logger->log(
-                'RECORD_UPDATED',
-                "updated appointment ID {$appointmentID}"
+                "APPOINTMENT_UPDATED",
+                "updated appointment ID {$appointmentID}",
             );
 
             return new JsonResponse([
-                'status' => 'ok',
-                'message' => 'Appointment updated successfully',
-                'appointmentID' => $appointmentID,
-                'newScheduleID' => $scheduleID
+                "status" => "ok",
+                "message" => "Appointment updated successfully",
+                "appointmentID" => $appointmentID,
+                "newScheduleID" => $scheduleID,
             ]);
         } catch (\Exception $e) {
-            return new JsonResponse([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return new JsonResponse(
+                [
+                    "status" => "error",
+                    "message" => $e->getMessage(),
+                ],
+                500,
+            );
         }
     }
 }

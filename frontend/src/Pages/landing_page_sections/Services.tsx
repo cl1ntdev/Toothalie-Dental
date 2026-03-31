@@ -82,66 +82,73 @@ export default function Services() {
           >
             {services.map((service, index) => {
               const isActive = index === activeIndex;
-
+            
               return (
                 <motion.div
                   key={service.id}
-                  onClick={() => setActiveIndex(index)}
+                  // Clicking the card still toggles, but we added a specific button too
+                  onClick={() => setActiveIndex(isActive ? null : index)}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`group relative snap-center min-w-[85vw] sm:min-w-[340px] md:min-w-[400px] h-[480px] md:h-[550px] flex-shrink-0 rounded-[2.5rem] overflow-hidden transition-all duration-500 ease-out cursor-pointer ${
-                    isActive
-                      ? "scale-100 sm:scale-105 z-20 ring-4 ring-white/80 "
-                      : "scale-[0.92] opacity-60 hover:opacity-100 hover:scale-[0.95]"
+                  className={`relative snap-center w-[280px] md:w-[320px] h-[450px] md:h-[500px] flex-shrink-0 rounded-3xl overflow-hidden transition-all duration-500 ease-in-out cursor-pointer border ${
+                    isActive 
+                      ? "border-white/40 shadow-2xl ring-1 ring-white/20" 
+                      : "border-transparent opacity-80 hover:opacity-100"
                   }`}
                 >
+                  {/* Portrait Image */}
                   <img
                     src={service.imgsource}
                     alt={service.title}
-                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-out ${
-                      isActive ? "scale-110" : "scale-100"
+                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ${
+                      isActive ? "scale-110 blur-[2px]" : "scale-100"
                     }`}
                   />
-
-                  <div className={`absolute top-0 inset-x-0 h-[50%] bg-gradient-to-b from-white/95 via-white/40 to-transparent transition-opacity duration-500 ${isActive ? "opacity-100" : "opacity-0"}`} />
-
-                  <div className="relative z-10 p-6 md:p-8 flex flex-col justify-between h-full pointer-events-none">
-                    <div>
-                      <h3
-                        className={`text-2xl md:text-3xl whitespace-pre-line leading-tight mb-3 font-ceramon transition-all duration-500 ${
-                          isActive
-                            ? "font-semibold text-blue-900 translate-y-0"
-                            : "font-medium text-gray-800 translate-y-4"
-                        }`}
-                      >
+            
+                  {/* Gradient Overlay - Darker at bottom for text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
+            
+                  {/* Content Layer */}
+                  <div className="relative z-10 p-6 flex flex-col justify-between h-full">
+                    <div className="flex justify-between items-start">
+                      <span className="text-xs font-bold tracking-widest text-white/60 uppercase">
+                        Service {service.id.toString().padStart(2, '0')}
+                      </span>
+                      
+                      {/* Status Dot */}
+                      <div className={`h-2 w-2 rounded-full transition-colors duration-300 ${isActive ? 'bg-blue-400 animate-pulse' : 'bg-white/30'}`} />
+                    </div>
+            
+                    <div className="space-y-3">
+                      <h3 className={`text-xl md:text-2xl font-ceramon text-white leading-tight transition-transform duration-500 ${isActive ? 'translate-y-0' : 'translate-y-2'}`}>
                         {service.title}
                       </h3>
-
-                      {isActive && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="max-w-[280px] md:max-w-full"
-                        >
-                          <p className="text-sm md:text-base text-gray-800 leading-relaxed font-medium bg-white/80 p-4 rounded-2xl backdrop-blur-md shadow-sm border border-white/50 mt-2">
+            
+                      {/* Expandable Description */}
+                      <div className={`grid transition-all duration-500 ease-in-out ${isActive ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+                        <div className="overflow-hidden">
+                          <p className="text-sm text-white/80 leading-relaxed pb-4">
                             {service.description}
                           </p>
-                        </motion.div>
-                      )}
-                    </div>
-
-                    <div className="flex justify-end">
-                      <span
-                        className={`text-7xl md:text-8xl leading-none tracking-tighter transition-all duration-700 ${
-                          isActive
-                            ? "text-blue-900/30 font-medium translate-y-0"
-                            : "text-gray-900/10 font-light translate-y-8"
+                        </div>
+                      </div>
+            
+                      {/* Toggle Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent card onClick from firing twice
+                          setActiveIndex(isActive ? null : index);
+                        }}
+                        className={`w-full py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border ${
+                          isActive 
+                            ? "bg-white text-black border-white" 
+                            : "bg-white/10 text-white border-white/20 backdrop-blur-md hover:bg-white/20"
                         }`}
                       >
-                        {service.id}
-                      </span>
+                        {isActive ? "CLOSE DETAILS" : "VIEW DETAILS"}
+                      </button>
                     </div>
                   </div>
                 </motion.div>

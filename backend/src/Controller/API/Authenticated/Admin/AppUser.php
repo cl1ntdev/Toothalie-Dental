@@ -154,6 +154,12 @@ class AppUser extends AbstractController
 
             $userId = $data["userID"];
 
+            // Fetch original data to diff
+            $originalUser = $connection->fetchAssociative(
+                "SELECT * FROM user WHERE id = ?",
+                [$userId],
+            );
+
             // Prepare update data. Use null for fields that should be left unchanged.
             $updateData = [
                 "first_name" => $data["first_name"] ?? null,
@@ -182,16 +188,33 @@ class AppUser extends AbstractController
             // Remove NULL values so fields remain unchanged
             $updateData = array_filter($updateData, fn($v) => $v !== null);
 
+            // Identify actual changes
+            $changedFields = [];
+            foreach ($updateData as $key => $newValue) {
+                if ($key === "password") {
+                    $changedFields[] = "password";
+                    continue;
+                }
+
+                $oldValue = $originalUser[$key] ?? null;
+                // strict cast string comparisons when checking for differences if needed,
+                // but loose comparison works here since DB often returns string for ints
+                if ($oldValue != $newValue) {
+                    $changedFields[] = "{$key} ('{$oldValue}' to '{$newValue}')";
+                }
+            }
+
             // Update database
             $connection->update("user", $updateData, ["id" => $userId]);
 
-            // Log the update
-            $logger->log(
-                "USER_UPDATED",
-                "Admin updated user ID {$userId} (Fields: " .
-                    implode(", ", array_keys($updateData)) .
-                    ")",
-            );
+            // Log the update, only if there were actual changes
+            if (!empty($changedFields)) {
+                $logger->log(
+                    "USER_UPDATED",
+                    "Admin updated user ID {$userId}. Changes: " .
+                        implode("; ", $changedFields),
+                );
+            }
 
             return new JsonResponse(
                 [

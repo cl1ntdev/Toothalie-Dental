@@ -54,7 +54,7 @@ final class AdminServiceTypeController extends AbstractController
         );
         $newId = $connection->lastInsertId();
         $this->logger->log(
-            "RECORD_CREATED",
+            "SERVICE_TYPE_CREATED",
             "Admin created service type '{$name}' with ID {$newId}",
         );
         return new JsonResponse(["status" => "ok"]);
@@ -86,7 +86,7 @@ final class AdminServiceTypeController extends AbstractController
             [$name, $id],
         );
         $this->logger->log(
-            "RECORD_UPDATED",
+            "SERVICE_TYPE_UPDATED",
             "Admin updated service type ID {$id} to name '{$name}'",
         );
         return new JsonResponse(["status" => "ok"]);
@@ -120,7 +120,7 @@ final class AdminServiceTypeController extends AbstractController
             $id,
         ]);
         $this->logger->log(
-            "RECORD_DELETED",
+            "SERVICE_TYPE_DELETED",
             "Admin deleted service type '{$nameBeforeDelete}' (ID: {$id})",
         );
         return new JsonResponse(["status" => "ok"]);

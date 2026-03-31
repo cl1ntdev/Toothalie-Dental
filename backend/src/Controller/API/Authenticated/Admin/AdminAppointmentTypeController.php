@@ -54,7 +54,7 @@ final class AdminAppointmentTypeController extends AbstractController
         );
         $newId = $connection->lastInsertId();
         $this->logger->log(
-            "RECORD_CREATED",
+            "APPOINTMENT_TYPE_CREATED",
             "Admin created appointment type '{$name}' with ID {$newId}",
         );
         return new JsonResponse(["status" => "ok"]);
@@ -86,7 +86,7 @@ final class AdminAppointmentTypeController extends AbstractController
             [$name, $id],
         );
         $this->logger->log(
-            "RECORD_UPDATED",
+            "APPOINTMENT_TYPE_UPDATED",
             "Admin updated appointment type ID {$id} to name '{$name}'",
         );
         return new JsonResponse(["status" => "ok"]);
@@ -121,7 +121,7 @@ final class AdminAppointmentTypeController extends AbstractController
             [$id],
         );
         $this->logger->log(
-            "RECORD_DELETED",
+            "APPOINTMENT_TYPE_DELETED",
             "Admin deleted appointment type '{$nameBeforeDelete}' (ID: {$id})",
         );
         return new JsonResponse(["status" => "ok"]);

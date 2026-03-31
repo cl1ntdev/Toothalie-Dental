@@ -160,6 +160,21 @@ class Schedule extends AbstractController
 
             $scheduleID = $data["id"];
 
+            $originalSchedule = $connection->fetchAssociative(
+                "SELECT * FROM schedule WHERE id = ?",
+                [$scheduleID],
+            );
+
+            if (!$originalSchedule) {
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Schedule not found",
+                    ],
+                    404,
+                );
+            }
+
             $updateData = [
                 "day_of_week" => $data["day_of_week"] ?? null,
                 "time_slot" => $data["time_slot"] ?? null,
@@ -168,15 +183,24 @@ class Schedule extends AbstractController
 
             $updateData = array_filter($updateData, fn($v) => $v !== null);
 
+            $changedFields = [];
+            foreach ($updateData as $key => $newValue) {
+                $oldValue = $originalSchedule[$key] ?? null;
+                if ($oldValue != $newValue) {
+                    $changedFields[] = "{$key} ('{$oldValue}' to '{$newValue}')";
+                }
+            }
+
             $connection->update("schedule", $updateData, ["id" => $scheduleID]);
 
             // Log update
-            $logger->log(
-                "SCHEDULE_UPDATED",
-                "Admin updated schedule ID {$scheduleID} (Fields: " .
-                    implode(", ", array_keys($updateData)) .
-                    ")",
-            );
+            if (!empty($changedFields)) {
+                $logger->log(
+                    "SCHEDULE_UPDATED",
+                    "Admin updated schedule ID {$scheduleID}. Changes: " .
+                        implode("; ", $changedFields),
+                );
+            }
 
             return new JsonResponse(
                 [

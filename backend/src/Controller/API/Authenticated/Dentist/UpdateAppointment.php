@@ -34,7 +34,7 @@ class UpdateAppointment extends AbstractController
             //     "status" => $status,
             //     "id" => $appointmentID,
             // ]);
-            
+
             if (!$appointmentID || !$status) {
                 return new JsonResponse(
                     [
@@ -69,7 +69,7 @@ class UpdateAppointment extends AbstractController
             // Log via ActivityLogger
             $user = $this->getUser();
             $logger->log(
-                "RECORD_UPDATED",
+                "APPOINTMENT_UPDATED",
                 "Dentist updated appointment ID {$appointmentID} status from '{$appointment["status"]}' to '{$status}'",
                 $user,
                 ["appointment_snapshot" => (object) $appointment],

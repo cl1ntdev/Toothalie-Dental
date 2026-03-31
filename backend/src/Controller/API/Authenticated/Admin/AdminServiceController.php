@@ -62,7 +62,7 @@ final class AdminServiceController extends AbstractController
         );
         $newId = $connection->lastInsertId();
         $this->logger->log(
-            "RECORD_CREATED",
+            "SERVICE_CREATED",
             "Admin created service '{$name}' with ID {$newId}",
         );
 
@@ -100,7 +100,7 @@ final class AdminServiceController extends AbstractController
             [$name, $serviceTypeId, $id],
         );
         $this->logger->log(
-            "RECORD_UPDATED",
+            "SERVICE_UPDATED",
             "Admin updated service ID {$id} to name '{$name}' and service type ID {$serviceTypeId}",
         );
 
@@ -136,7 +136,7 @@ final class AdminServiceController extends AbstractController
             $id,
         ]);
         $this->logger->log(
-            "RECORD_DELETED",
+            "SERVICE_DELETED",
             "Admin deleted service '{$nameBeforeDelete}' (ID: {$id})",
         );
 

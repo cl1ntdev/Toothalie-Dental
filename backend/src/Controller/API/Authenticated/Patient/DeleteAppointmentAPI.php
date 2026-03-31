@@ -15,72 +15,82 @@ class DeleteAppointmentAPI extends AbstractController
         Route(
             "/api/delete-appointment",
             name: "patient_delete_appointment",
-            methods: ["POST"]
+            methods: ["POST"],
         ),
     ]
     public function deleteAppointment(
         Request $req,
         Connection $connection,
-        ActivityLogger $logger
+        ActivityLogger $logger,
     ): JsonResponse {
-        date_default_timezone_set('Asia/Manila');
+        date_default_timezone_set("Asia/Manila");
 
         try {
             $data = json_decode($req->getContent(), true);
-            $appointmentID = $data['appointmentID'] ?? null;
+            $appointmentID = $data["appointmentID"] ?? null;
 
             if (!$appointmentID) {
-                return new JsonResponse([
-                    'status' => 'error',
-                    'message' => 'Missing appointmentID',
-                ], 400);
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Missing appointmentID",
+                    ],
+                    400,
+                );
             }
 
             $appointment = $connection->fetchAssociative(
                 "SELECT * FROM appointment WHERE id = ?",
-                [$appointmentID]
+                [$appointmentID],
             );
 
             if (!$appointment) {
-                return new JsonResponse([
-                    'status' => 'error',
-                    'message' => 'Appointment not found',
-                ], 404);
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Appointment not found",
+                    ],
+                    404,
+                );
             }
 
             $connection->update(
-                'appointment',
-                ['deleted_on' =>(new \DateTime())->format('Y-m-d H:i:s')],
-                ['id' => $appointmentID]
+                "appointment",
+                ["deleted_on" => new \DateTime()->format("Y-m-d H:i:s")],
+                ["id" => $appointmentID],
             );
 
             $logger->log(
-                'RECORD_DELETED',
+                "APPOINTMENT_DELETED",
                 "Patient deleted appointment ID {$appointmentID}",
-                null, 
+                null,
                 [
-                    'actor_type' => 'PATIENT',
-                    'appointment_snapshot' => $appointment, 
-                ]
+                    "actor_type" => "PATIENT",
+                    "appointment_snapshot" => $appointment,
+                ],
             );
 
             return new JsonResponse([
-                'status' => 'success',
-                'message' => 'Appointment deleted successfully',
-                'appointment_id' => $appointmentID,
+                "status" => "success",
+                "message" => "Appointment deleted successfully",
+                "appointment_id" => $appointmentID,
             ]);
         } catch (\Exception $e) {
             $logger->log(
-                'ERROR',
+                "ERROR",
                 "Failed to delete appointment: " . $e->getMessage(),
                 null,
-                ['actor_type' => 'PATIENT']
+                ["actor_type" => "PATIENT"],
             );
 
-            return new JsonResponse([
-                'status' => 'error',
-                'message' => 'Failed to delete appointment: ' . $e->getMessage(),
-            ], 500);
+            return new JsonResponse(
+                [
+                    "status" => "error",
+                    "message" =>
+                        "Failed to delete appointment: " . $e->getMessage(),
+                ],
+                500,
+            );
         }
     }
 }

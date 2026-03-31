@@ -1,16 +1,16 @@
 <?php
-// src/EventSubscriber/UserActivitySubscriber.php
+
 namespace App\EventSubscriber;
 
-use App\Entity\User;
 use App\Entity\Appointment;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Events;
+use App\Entity\User;
 use App\Service\ActivityLogger;
+use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class UserActivitySubscriber implements EventSubscriber
+class UserActivitySubscriber implements EventSubscriberInterface
 {
     private ActivityLogger $logger;
     private Security $security;
@@ -23,46 +23,66 @@ class UserActivitySubscriber implements EventSubscriber
 
     public function getSubscribedEvents(): array
     {
-        return [
-            Events::postPersist,  // after entity is created
-            Events::postUpdate,   // after update
-            Events::postRemove    // after delete
-        ];
+        return [Events::postPersist, Events::postUpdate, Events::postRemove];
     }
 
-    public function postPersist(LifecycleEventArgs $args)
+    public function postPersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
         $actor = $this->security->getUser();
 
         if ($entity instanceof User) {
-            $this->logger->log('USER_CREATED', "Created user ID {$entity->getId()} ({$entity->getUserIdentifier()})", $actor);
+            $this->logger->log(
+                "USER_CREATED",
+                "Created user ID {$entity->getId()} ({$entity->getUserIdentifier()})",
+                $actor,
+            );
         } elseif ($entity instanceof Appointment) {
-            $this->logger->log('RECORD_CREATED', "Created appointment ID {$entity->getId()}", $actor);
+            $this->logger->log(
+                "APPOINTMENT_CREATED",
+                "Created appointment ID {$entity->getId()}",
+                $actor,
+            );
         }
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
+    public function postUpdate(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
         $actor = $this->security->getUser();
 
         if ($entity instanceof User) {
-            $this->logger->log('USER_UPDATED', "Updated user ID {$entity->getId()} ({$entity->getUserIdentifier()})", $actor);
+            $this->logger->log(
+                "USER_UPDATED",
+                "Updated user ID {$entity->getId()} ({$entity->getUserIdentifier()})",
+                $actor,
+            );
         } elseif ($entity instanceof Appointment) {
-            $this->logger->log('RECORD_UPDATED', "Updated appointment ID {$entity->getId()}", $actor);
+            $this->logger->log(
+                "APPOINTMENT_UPDATED",
+                "Updated appointment ID {$entity->getId()}",
+                $actor,
+            );
         }
     }
 
-    public function postRemove(LifecycleEventArgs $args)
+    public function postRemove(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
         $actor = $this->security->getUser();
 
         if ($entity instanceof User) {
-            $this->logger->log('USER_DELETED', "Deleted user ID {$entity->getId()}", $actor);
+            $this->logger->log(
+                "USER_DELETED",
+                "Deleted user ID {$entity->getId()}",
+                $actor,
+            );
         } elseif ($entity instanceof Appointment) {
-            $this->logger->log('RECORD_DELETED', "Deleted appointment ID {$entity->getId()}", $actor);
+            $this->logger->log(
+                "APPOINTMENT_DELETED",
+                "Deleted appointment ID {$entity->getId()}",
+                $actor,
+            );
         }
     }
 }

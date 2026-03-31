@@ -167,7 +167,7 @@ class Appointment extends AbstractController
                 "service_id" => isset($data["service_id"])
                     ? (int) $data["service_id"]
                     : null,
-                "appointment_date" => (new \DateTime())->format('Y-m-d H:i:s'),
+                "appointment_date" => new \DateTime()->format("Y-m-d H:i:s"),
             ];
 
             if (!empty($insertData["service_id"])) {
@@ -187,7 +187,7 @@ class Appointment extends AbstractController
 
             // Log the creation
             $logger->log(
-                "RECORD_CREATED",
+                "APPOINTMENT_CREATED",
                 "Admin created appointment ID {$newId} (Patient: {$insertData["patient_id"]}, Dentist: {$insertData["dentist_id"]})",
             );
 
@@ -223,6 +223,21 @@ class Appointment extends AbstractController
 
             $appointmentID = (int) $id;
 
+            $originalAppointment = $connection->fetchAssociative(
+                "SELECT * FROM appointment WHERE id = ?",
+                [$appointmentID],
+            );
+
+            if (!$originalAppointment) {
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Appointment not found",
+                    ],
+                    404,
+                );
+            }
+
             $updateData = [
                 "patient_id" => isset($data["patient_id"])
                     ? (int) $data["patient_id"]
@@ -257,17 +272,26 @@ class Appointment extends AbstractController
                 );
             }
 
+            $changedFields = [];
+            foreach ($updateData as $key => $newValue) {
+                $oldValue = $originalAppointment[$key] ?? null;
+                if ($oldValue != $newValue) {
+                    $changedFields[] = "{$key} ('{$oldValue}' to '{$newValue}')";
+                }
+            }
+
             $connection->update("appointment", $updateData, [
                 "id" => $appointmentID,
             ]);
 
             // Log the update
-            $logger->log(
-                "RECORD_UPDATED",
-                "Admin updated appointment ID {$appointmentID} (Fields: " .
-                    implode(", ", array_keys($updateData)) .
-                    ")",
-            );
+            if (!empty($changedFields)) {
+                $logger->log(
+                    "APPOINTMENT_UPDATED",
+                    "Admin updated appointment ID {$appointmentID}. Changes: " .
+                        implode("; ", $changedFields),
+                );
+            }
 
             return new JsonResponse([
                 "status" => "success",
@@ -313,7 +337,7 @@ class Appointment extends AbstractController
 
             // Log the deletion
             $logger->log(
-                "RECORD_DELETED",
+                "APPOINTMENT_DELETED",
                 "Admin deleted appointment ID {$id}",
             );
 

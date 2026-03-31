@@ -48,7 +48,7 @@ final class AdminRoleController extends AbstractController
         );
         $newId = $connection->lastInsertId();
         $this->logger->log(
-            "RECORD_CREATED",
+            "ROLE_CREATED",
             "Admin created role '{$name}' with ID {$newId}",
         );
         return new JsonResponse(["status" => "ok"]);
@@ -80,7 +80,7 @@ final class AdminRoleController extends AbstractController
             [$name, $id],
         );
         $this->logger->log(
-            "RECORD_UPDATED",
+            "ROLE_UPDATED",
             "Admin updated role ID {$id} to name '{$name}'",
         );
         return new JsonResponse(["status" => "ok"]);
@@ -112,7 +112,7 @@ final class AdminRoleController extends AbstractController
         );
         $connection->executeStatement("DELETE FROM role WHERE id = ?", [$id]);
         $this->logger->log(
-            "RECORD_DELETED",
+            "ROLE_DELETED",
             "Admin deleted role '{$nameBeforeDelete}' (ID: {$id})",
         );
         return new JsonResponse(["status" => "ok"]);

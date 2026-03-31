@@ -137,7 +137,19 @@ export default function Logs() {
       USER_CREATED: "bg-blue-100 text-blue-800 border-blue-200",
       USER_UPDATED: "bg-yellow-100 text-yellow-800 border-yellow-200",
       USER_DELETED: "bg-red-100 text-red-800 border-red-200",
-      RECORD_CREATED: "bg-indigo-100 text-indigo-800 border-indigo-200",
+      APPOINTMENT_CREATED: "bg-indigo-100 text-indigo-800 border-indigo-200",
+      APPOINTMENT_UPDATED: "bg-purple-100 text-purple-800 border-purple-200",
+      APPOINTMENT_DELETED: "bg-rose-100 text-rose-800 border-rose-200",
+      ROLE_CREATED: "bg-teal-100 text-teal-800 border-teal-200",
+      ROLE_UPDATED: "bg-orange-100 text-orange-800 border-orange-200",
+      ROLE_DELETED: "bg-red-100 text-red-800 border-red-200",
+      SERVICE_CREATED: "bg-cyan-100 text-cyan-800 border-cyan-200",
+      SERVICE_UPDATED: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      SERVICE_DELETED: "bg-red-100 text-red-800 border-red-200",
+      SCHEDULE_CREATED: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      SCHEDULE_UPDATED: "bg-lime-100 text-lime-800 border-lime-200",
+      SCHEDULE_DELETED: "bg-red-100 text-red-800 border-red-200",
+      ERROR: "bg-red-100 text-red-800 border-red-200",
     };
     return actionColors[action] || "bg-gray-100 text-gray-800 border-gray-200";
   };

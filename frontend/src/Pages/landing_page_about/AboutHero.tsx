@@ -15,7 +15,7 @@ export default function AboutHero() {
       {/* Dynamic gradient for better text contrast on mobile */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 md:from-white/20 md:via-black/10 md:to-transparent" />
       
-      <div className="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10 md:pb-20 pt-24">
+      <div className="absolute inset-0 w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10 md:pb-20 pt-24">
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-8 lg:gap-12">
           
           <motion.div 
