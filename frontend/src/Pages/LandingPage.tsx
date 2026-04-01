@@ -7,7 +7,7 @@ import Testimonials from "./landing_page_sections/Testimonials";
 import StatsCTA from "./landing_page_sections/StatsCTA";
 import Footer from "./PageComponents/Footer";
 import bg from '../assets/bg.webp'
-
+import Dentist from "./landing_page_sections/Dentists";
 export default function LandingPage() {
   useEffect(() => {
     try {
@@ -51,6 +51,9 @@ export default function LandingPage() {
           <Testimonials />
         </section>
 
+        <section id="dentists" aria-label="Dentists">
+          <Dentist />
+        </section>
         <section aria-label="Stats and CTA">
           <StatsCTA />
         </section>

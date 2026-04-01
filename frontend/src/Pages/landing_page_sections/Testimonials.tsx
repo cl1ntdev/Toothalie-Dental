@@ -4,45 +4,45 @@ import { ArrowDown } from "lucide-react";
 const personas = [
   {
     id: 1,
-    name: "Anna M., 38",
-    role: "Graphic designer — Prague",
-    avatar: "https://picsum.photos/seed/anna/100/100",
+    name: "Isabella T., 34",
+    role: "Creative Director — Cebu City",
+    avatar: "https://picsum.photos/seed/isabella/100/100",
     profile:
-      "Busy creative who needs flexible scheduling, visual proof of results, and transparent pricing before committing to care.",
+      "Aesthetic-driven professional who values her time. Demands transparent pricing, visual proof of outcomes, and seamless digital booking.",
     painPoints:
-      "Long phone queues and vague treatment timelines. Wants secure online booking plus clear aftercare instructions she can revisit.",
+      "Outdated phone-booking systems, hidden aesthetic fees, and the inability to preview cosmetic results before committing.",
     testimonial:
-      '"Toothalie let me book in minutes and every veneer step was explained with visuals. I finally love how my smile looks on camera."',
+      '"I needed a clinic that respects my time. The ability to book instantly and see digital mockups of my veneers was an absolute game-changer."',
   },
   {
     id: 2,
-    name: "Marek P., 59",
-    role: "Self-employed consultant — Warsaw",
-    avatar: "https://picsum.photos/seed/marek/100/100",
+    name: "Marcus L., 52",
+    role: "Corporate Executive — Makati",
+    avatar: "https://picsum.photos/seed/marcus/100/100",
     profile:
-      "Plans treatments around client meetings, prioritizes longevity and comfort of implants, and expects measurable follow-up.",
+      "Results-oriented and highly scheduled. Prioritizes the longevity of surgical implants and expects clear, measurable post-op tracking.",
     painPoints:
-      "Uncertain recovery times and hidden fees. Needs honest timelines and clinicians who track healing digitally.",
+      "Unpredictable recovery timelines and inefficient physical follow-up appointments that disrupt a busy workday.",
     testimonial:
-      '"My implant felt stable quickly, and the team checked in through the Toothalie portal so I never wondered if I was healing right."',
+      '"The digital portal kept me connected with my surgeon. I tracked my implant healing remotely without missing a single board meeting."',
   },
   {
     id: 3,
-    name: "Ewa S., 27",
-    role: "Primary school teacher — Katowice",
-    avatar: "https://picsum.photos/seed/ewa/100/100",
+    name: "Elena R., 28",
+    role: "Architect — Bayawan City",
+    avatar: "https://picsum.photos/seed/elena/100/100",
     profile:
-      "Research-driven, anxious about pain, and comforted by empathetic explanations and before/after comparisons.",
+      "Detail-oriented but prone to dental anxiety. Requires empathetic communication, clear step-by-step guidance, and a calming environment.",
     painPoints:
-      "Overwhelming jargon and cold clinic atmospheres. Wants calming guidance and easy access to her records.",
+      "Cold clinical jargon, rushed consultations, and feeling disconnected from her own dental health records.",
     testimonial:
-      '"They walked me through every step, shared realistic before-and-afters, and the secure records mean I always know what\'s next."',
+      '"For the first time, I wasn\'t intimidated. The visual breakdowns and secure access to my records gave me complete peace of mind."',
   },
 ];
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="py-16 md:py-24 lg:py-32 font-poppins">
+    <section id="testimonials" className="py-16 md:py-24 lg:py-5 font-poppins">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-16 mb-24">
           <div className="lg:col-span-4 flex flex-col justify-between">
@@ -67,14 +67,15 @@ export default function Testimonials() {
           </div>
 
           <div className="lg:col-span-8">
-            <h3 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light text-gray-900 leading-snug tracking-tight font-ceramon">
-              I conducted a detailed audience analysis to{" "}
-              <span className="font-medium">
-                align the clinic's website UX with the real needs
-              </span>
-              , motivations, and expectations{" "}
-              <span className="text-soft-blue">of patients</span> seeking
-              premium implants and other advanced dental services.
+            
+            <h3 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-light text-gray-900 leading-relaxed tracking-tight font-ceramon">
+              Behind every procedure is a{" "}
+              <span className="font-medium italic border-b border-blue-200">
+                study of human needs.
+              </span>{" "}
+              I mapped the patient journey to ensure Toothalie{" "}
+              <span className="text-soft-blue">anticipates every expectation</span>{" "}
+              of premium dental care.
             </h3>
           </div>
         </div>
@@ -146,29 +147,25 @@ export default function Testimonials() {
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
                 <p className="text-sm md:text-base text-gray-300 leading-relaxed">
-                  Understand the quality and reliability of treatments through
-                  clear visuals, patient stories, and doctor credentials
+                  Prove quality and reliability through clear visuals, verified patient stories, and accessible credentials.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
                 <p className="text-sm md:text-base text-gray-300 leading-relaxed">
-                  Easily access pricing, treatment options, and appointment
-                  booking in one or two steps
+                  Streamline access to pricing, treatment mapping, and appointment booking into a frictionless process.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
                 <p className="text-sm md:text-base text-gray-300 leading-relaxed">
-                  Feel trust and safety through transparent, respectful
-                  communication.
+                  Establish a secure environment of trust and safety through transparent, asynchronous communication.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
                 <p className="text-sm md:text-base text-gray-300 leading-relaxed">
-                  Recognize the clinic as a premium, technology-driven yet
-                  caring dental provider.
+                  Position the clinic as a modern, technology-driven leader that retains a deeply empathetic human touch.
                 </p>
               </li>
             </ul>

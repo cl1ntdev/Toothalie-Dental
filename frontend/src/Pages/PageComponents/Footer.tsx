@@ -74,6 +74,9 @@ export default function Footer() {
                 <button type="button" onClick={() => navigateTo('/', 'testimonials')} className="hover:text-white transition-colors">Testimonials</button>
               </li>
               <li>
+                <button type="button" onClick={() => navigateTo('/', 'dentists')} className="hover:text-white transition-colors">Dentists</button>
+              </li>
+              <li>
                  <button type="button" onClick={() => navigateTo('/contacts')} className="hover:text-white transition-colors">Contact</button>
               </li>
             </ul>
