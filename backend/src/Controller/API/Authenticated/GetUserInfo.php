@@ -47,7 +47,7 @@ class GetUserInfo extends AbstractController
                 'firstName' => $user->getFirstName(),
                 'lastName' => $user->getLastName(),
                 'email' => $user->getEmail(),
-                'password' => $user->getPassword(),
+                // 'password' => $user->getPassword(),
                 'disable' => $user->isDisable(),
                 'roles' => $roles
             ]
