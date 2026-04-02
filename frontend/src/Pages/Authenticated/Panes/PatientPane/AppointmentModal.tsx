@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { getServices } from "@/API/Authenticated/appointment/GetServices";
 import { getAppointmentTypes } from "@/API/Authenticated/appointment/GetAppointmentTypes";
 import { getAllDentist } from "@/API/Authenticated/GetDentist";
@@ -16,17 +18,53 @@ import type {
   SelectService,
 } from "./appointment-modal/types";
 
+// static shi
+import {
+  appointmentTypeRes as staticAppointmentTypeRes,
+  servicesRes as staticServicesRes,
+  dentistRes as staticDentistRes,
+} from "./static/DentistData";
+
+const normalizeServiceItem = (service: any) => {
+  const serviceId = service.service_id ?? service.serviceID;
+  const serviceName = service.service_name ?? service.serviceName;
+  const serviceTypeId = service.serviceTypeId ?? service.service_type_id;
+  const serviceTypeName =
+    service.serviceTypeName ?? service.service_type_name ?? service.serviceType;
+
+  return {
+    ...service,
+    service_id: serviceId,
+    service_name: serviceName,
+    service_type_id: serviceTypeId,
+    serviceTypeId: serviceTypeId,
+    serviceTypeName: serviceTypeName,
+    serviceID: serviceId,
+    serviceName: serviceName,
+  };
+};
+
+const normalizeDentist = (dentist: any) => ({
+  ...dentist,
+  specialty: dentist.specialty ?? dentist.specialization,
+  services: (dentist.services || []).map(normalizeServiceItem),
+});
+
 type AppointmentProps = {
   onClose: () => void;
   appointmentSuccess: () => void;
   operatorPhone?: string;
+  isStatic: boolean;
 };
 
 export default function AppointmentModal({
   onClose,
   appointmentSuccess,
   operatorPhone,
+  isStatic = false,
 }: AppointmentProps) {
+  const navigate = useNavigate();
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [bookingMethod, setBookingMethod] = useState<
     "operator" | "self" | null
@@ -62,7 +100,7 @@ export default function AppointmentModal({
 
   const [contactFirstName, setContactFirstName] = useState("");
   const [contactLastName, setContactLastName] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
   const [acknowledge, setAcknowledge] = useState(false);
 
   const operatorPhoneValue = operatorPhone?.trim() || "09453690012";
@@ -74,27 +112,73 @@ export default function AppointmentModal({
     const fetchInitialData = async () => {
       try {
         setLoading(true);
-        const [dentistRes, serviceRes, appointmentTypeRes] = await Promise.all([
+        console.log("Loaded dentist :", staticDentistRes);
+        console.log("Loaded static services:", staticServicesRes);
+        console.log(
+          "Loaded static appointment types:",
+          staticAppointmentTypeRes,
+        );
+
+        if (isStatic) {
+          console.log("Public View: Loading static data...");
+
+          // 1. Populate Dentists
+          if (staticDentistRes.status === "ok" && staticDentistRes.dentists) {
+            const normalizedDentists =
+              staticDentistRes.dentists.map(normalizeDentist);
+            setDentists(normalizedDentists);
+            setFilteredDentists(normalizedDentists);
+          } else {
+            setError("No static dentists found.");
+          }
+
+          // 2. Populate Services
+          if (staticServicesRes.data) {
+            setServicesCatalog(
+              staticServicesRes.data.map(normalizeServiceItem),
+            );
+          }
+
+          // 3. Populate Appointment Types
+          if (staticAppointmentTypeRes.data) {
+            setAppointmentTypes(staticAppointmentTypeRes.data);
+            // Default to the first type if available
+            if (staticAppointmentTypeRes.data.length > 0) {
+              setSelectedAppointmentTypeId(staticAppointmentTypeRes.data[0].id);
+            }
+          }
+
+          return;
+        }
+
+        console.log("Logged In View: Fetching live data...");
+        const [
+          fetchedDentistRes,
+          fetchedServiceRes,
+          fetchedAppointmentTypeRes,
+        ] = await Promise.all([
           getAllDentist(),
           getServices(),
           getAppointmentTypes(),
         ]);
 
-        if (dentistRes.status === "ok" && dentistRes.dentists) {
-          setDentists(dentistRes.dentists);
-          setFilteredDentists(dentistRes.dentists);
+        if (fetchedDentistRes.status === "ok" && fetchedDentistRes.dentists) {
+          const normalizedDentists =
+            fetchedDentistRes.dentists.map(normalizeDentist);
+          setDentists(normalizedDentists);
+          setFilteredDentists(normalizedDentists);
         } else {
           setError("No dentists found.");
         }
 
-        if (serviceRes.data) {
-          setServicesCatalog(serviceRes.data);
+        if (fetchedServiceRes.data) {
+          setServicesCatalog(fetchedServiceRes.data.map(normalizeServiceItem));
         }
 
-        if (appointmentTypeRes.data) {
-          setAppointmentTypes(appointmentTypeRes.data);
-          if (appointmentTypeRes.data.length > 0) {
-            setSelectedAppointmentTypeId(appointmentTypeRes.data[0].id);
+        if (fetchedAppointmentTypeRes.data) {
+          setAppointmentTypes(fetchedAppointmentTypeRes.data);
+          if (fetchedAppointmentTypeRes.data.length > 0) {
+            setSelectedAppointmentTypeId(fetchedAppointmentTypeRes.data[0].id);
           }
         }
       } catch (err) {
@@ -104,8 +188,9 @@ export default function AppointmentModal({
         setLoading(false);
       }
     };
+
     fetchInitialData();
-  }, []);
+  }, [isStatic]); // The effect w
 
   useEffect(() => {
     if (!selectService.serviceID) {
@@ -113,9 +198,10 @@ export default function AppointmentModal({
       return;
     }
     const filtered = dentists.filter((dentist) =>
-      dentist.services?.some(
-        (service: any) => service.serviceID === selectService.serviceID,
-      ),
+      dentist.services?.some((service: any) => {
+        const serviceId = service.service_id ?? service.serviceID;
+        return serviceId === selectService.serviceID;
+      }),
     );
     setFilteredDentists(filtered);
   }, [selectService.serviceID, dentists]);
@@ -185,7 +271,7 @@ export default function AppointmentModal({
     !!selectedAppointmentTypeId &&
     contactFirstName.trim() &&
     contactLastName.trim() &&
-    contactPhone.trim();
+    contactEmail.trim();
 
   const handleSubmit = async () => {
     if (!canSubmit || !selectedAppointmentTypeId) {
@@ -196,10 +282,29 @@ export default function AppointmentModal({
     const formattedDate = date!.toLocaleDateString("en-CA");
     const serviceID = selectService.serviceID!.toString();
 
-    const contactLine = `Contact: ${contactFirstName.trim()} ${contactLastName.trim()} (${contactPhone.trim()})`;
+    const contactLine = `Contact: ${contactFirstName.trim()} ${contactLastName.trim()} (${contactEmail.trim()})`;
     const noteLine = message.trim() ? `Note: ${message.trim()}` : "";
     const composedMessage = [contactLine, noteLine].filter(Boolean).join(" | ");
 
+    const user_check = JSON.parse(localStorage.getItem("ToothalieUser"));
+    if (!user_check || !user_check.id) {
+      localStorage.setItem(
+        "unauthorized_appointment",
+        JSON.stringify({
+          pickDentist: pickDentist.toString(),
+          pickDay,
+          pickTime,
+          isEmergency,
+          selectedAppointmentTypeId,
+          formattedDate,
+          composedMessage,
+          serviceID,
+        }),
+      );
+
+      navigate("/login");
+      return;
+    }
     const res = await SubmitAppointment(
       pickDentist.toString(),
       pickDay,
@@ -221,13 +326,9 @@ export default function AppointmentModal({
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 font-sans animate-in fade-in duration-200">
-      
-      {/* CRITICAL CHANGE: Set a fixed height (h-[90vh]) instead of max-h so flex children can scroll */}
       <div className="bg-white rounded-3xl w-full max-w-5xl shadow-2xl flex flex-col h-[90vh] overflow-hidden border border-slate-100">
-        
         <AppointmentModalHeader step={step} onClose={onClose} />
 
-        {/* CRITICAL CHANGE: flex-1 and min-h-0. If step === 2, overflow-hidden delegates scrolling to child */}
         <div
           className={`flex-1 min-h-0 w-full bg-white ${
             step === 2 ? "overflow-hidden" : "overflow-y-auto"
@@ -257,8 +358,8 @@ export default function AppointmentModal({
               onSelectService={(service) => {
                 setSelectService({
                   serviceTypeName: service.serviceTypeName,
-                  serviceID: service.service_id,
-                  serviceName: service.service_name,
+                  serviceID: service.service_id ?? service.serviceID,
+                  serviceName: service.service_name ?? service.serviceName,
                 });
               }}
               loading={loading}
@@ -296,10 +397,10 @@ export default function AppointmentModal({
               setSelectedAppointmentTypeId={setSelectedAppointmentTypeId}
               contactFirstName={contactFirstName}
               contactLastName={contactLastName}
-              contactPhone={contactPhone}
+              contactEmail={contactEmail}
               setContactFirstName={setContactFirstName}
               setContactLastName={setContactLastName}
-              setContactPhone={setContactPhone}
+              setContactEmail={setContactEmail}
               message={message}
               setMessage={setMessage}
               acknowledge={acknowledge}

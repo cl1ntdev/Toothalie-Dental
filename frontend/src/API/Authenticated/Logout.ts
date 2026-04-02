@@ -11,9 +11,8 @@ export async function LogoutUser() {
     });
     console.log(userData);
     localStorage.removeItem("userInfo");
-    if (localStorage.getItem("loginedDentist")) {
-      localStorage.removeItem("loginedDentist");
-    }
+    localStorage.removeItem("ToothalieUser");
+    localStorage.removeItem("loginedDentist");
     return userData.json();
   } catch (e) {
     console.log(e);

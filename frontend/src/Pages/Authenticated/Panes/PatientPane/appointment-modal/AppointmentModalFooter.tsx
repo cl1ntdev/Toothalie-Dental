@@ -54,7 +54,7 @@ export default function AppointmentModalFooter({
               disabled={!canContinue}
               className={`flex-1 sm:flex-none min-w-[140px] ${
                 canContinue
-                  ? "bg-teal-600 hover:bg-teal-700 text-white"
+                  ? "bg-blue-600 hover:bg-teal-700 text-white"
                   : "opacity-50"
               }`}
             >

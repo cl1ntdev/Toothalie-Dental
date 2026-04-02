@@ -150,6 +150,7 @@ export default function UserDashboard() {
         const data = await GetUserInfo();
         console.log("Fetched User:", data);
         setUserInfo(data.user);
+        localStorage.setItem("ToothalieUser", JSON.stringify(data.user));
         if (data.user.disable) {
           console.log("disabled");
           setIsDisable(true);

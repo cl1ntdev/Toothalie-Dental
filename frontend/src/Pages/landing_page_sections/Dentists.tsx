@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowRight as ArrowRightIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import AppointmentModal from "../Authenticated/Panes/PatientPane/AppointmentModal";
 import dentist1 from '../../assets/home_page_assets/dentist1.webp';
 import dentist2 from '../../assets/home_page_assets/dentist2.webp';
 import dentist3 from '../../assets/home_page_assets/dentist3.webp';
@@ -56,12 +58,13 @@ const doctors = [
 export default function Dentist() {
   const [selectedId, setSelectedId] = useState(2);
   const carouselRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
   // Drag-to-scroll state
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-
+  const navigate = useNavigate();
   // Arrow Click Scrolling
   const scroll = (direction) => {
     if (carouselRef.current) {
@@ -217,7 +220,11 @@ export default function Dentist() {
                     <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
                       isSelected ? "max-h-20 opacity-100 mt-auto" : "max-h-0 opacity-0"
                     }`}>
-                      <button className="w-full bg-slate-900 text-white rounded-full py-3.5 px-6 font-semibold flex items-center justify-between hover:bg-slate-800 hover:shadow-lg hover:shadow-blue-500/20 transition-all group cursor-pointer">
+                      <button className="w-full bg-slate-900 text-white rounded-full py-3.5 px-6 font-semibold flex items-center justify-between hover:bg-slate-800 hover:shadow-lg hover:shadow-blue-500/20 transition-all group cursor-pointer"
+                        onClick={() => {
+                          setIsModalOpen(true);
+                        }}
+                      >
                         <span className="tracking-wide text-sm md:text-base">Book appointment</span>
                         <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-900 group-hover:scale-110 transition-transform">
                           <ArrowRightIcon className="w-4 h-4" />
@@ -230,7 +237,14 @@ export default function Dentist() {
             })}
           </div>
         </motion.div>
-
+        {isModalOpen && (
+          <AppointmentModal
+            onClose={() => setIsModalOpen(false)}
+            appointmentSuccess={() => alert("siccess")} 
+            operatorPhone="static phone number"
+            isStatic={true}
+          />
+        )}
       </div>
 
       {/* Global CSS block to ensure scrollbar is stripped across all browsers */}

@@ -72,4 +72,6 @@ Staff
 
 ==============
 - TESTING
-- MORE SPECIFIC LOGS
+- Dentist Dashboard
+/- Dentist Data
+- Dentist Setting Time
