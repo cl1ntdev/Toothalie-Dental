@@ -1,9 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { getDentistData } from "@/API/Authenticated/GetDentist";
-import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X, User, Mail, Shield } from "lucide-react";
+import {
+  Plus,
+  Save,
+  Trash2,
+  RefreshCw,
+  Calendar,
+  Clock,
+  X,
+} from "lucide-react";
 import { updateSettingsDentist } from "@/API/Authenticated/Dentist/SettingsAPI";
-import SettingsService from "./SettingsService";
-import Alert from '@/components/_myComp/Alerts';
+import SettingsService from "./settings/SettingsService";
+import SettingsHeader from "./settings/SettingsHeader";
+import SettingsSection from "./settings/SettingsSection";
+import Alert from "@/components/_myComp/Alerts";
+
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  const h = Math.floor(i / 2)
+    .toString()
+    .padStart(2, "0");
+  const m = i % 2 === 0 ? "00" : "30";
+  return `${h}:${m}`;
+});
 
 export function SettingsPane() {
   const [dentistInfo, setDentistInfo] = useState<any>(null);
@@ -11,12 +29,12 @@ export function SettingsPane() {
   const [refreshing, setRefreshing] = useState(false);
   const [schedules, setSchedules] = useState<any[]>([]);
   const [userInfo, setUserInfo] = useState<any>(null);
-  const [alert, setAlert] = useState({ 
-       show: false, 
-       type: "info", 
-       title: "", 
-       message: "" 
-     });
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "info",
+    title: "",
+    message: "",
+  });
 
   const transformScheduleData = (apiSchedules: any[]) => {
     const groupedByDay: { [key: string]: any } = {};
@@ -69,7 +87,9 @@ export function SettingsPane() {
       if (result?.status === "ok") {
         setDentistInfo(result.dentist);
 
-        const transformedSchedules = transformScheduleData(result.schedule || []);
+        const transformedSchedules = transformScheduleData(
+          result.schedule || [],
+        );
         setSchedules(transformedSchedules);
 
         localStorage.setItem(
@@ -125,7 +145,11 @@ export function SettingsPane() {
     setSchedules(updated);
   };
 
-  const handleEditTimeSlot = (dayIndex: number, timeIndex: number, value: string) => {
+  const handleEditTimeSlot = (
+    dayIndex: number,
+    timeIndex: number,
+    value: string,
+  ) => {
     const updated = [...schedules];
     updated[dayIndex].time_slots[timeIndex].time = value;
     setSchedules(updated);
@@ -139,11 +163,27 @@ export function SettingsPane() {
   };
 
   const handleAddSchedule = () => {
-    const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const allDays = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     const existingDays = schedules.map((s) => s.day_of_week);
     const availableDays = allDays.filter((day) => !existingDays.includes(day));
 
-    if (availableDays.length === 0) return alert("All days already have schedules!");
+    if (availableDays.length === 0) {
+      setAlert({
+        show: true,
+        type: "warning",
+        title: "No available days",
+        message: "All days already have schedules.",
+      });
+      return;
+    }
 
     const newSchedule = {
       dentistID: dentistInfo?.id,
@@ -170,18 +210,19 @@ export function SettingsPane() {
       if (res.status === "ok") {
         localStorage.setItem(
           "loginedDentist",
-          JSON.stringify({ dentist: dentistInfo, user: userInfo, schedule: apiFormat }),
+          JSON.stringify({
+            dentist: dentistInfo,
+            user: userInfo,
+            schedule: apiFormat,
+          }),
         );
-        
-        
-         setAlert({
-                  show: true,
-                  type: "success", // success, error, warning, info
-                  title: "Saved Successfully",
-                  message: "Schedule Save Successfully"
-                });
-        
 
+        setAlert({
+          show: true,
+          type: "success", // success, error, warning, info
+          title: "Saved Successfully",
+          message: "Schedule Save Successfully",
+        });
       } else {
         console.error("Failed to save schedules:", res);
       }
@@ -194,45 +235,38 @@ export function SettingsPane() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
-        <span className="text-gray-500 text-sm font-medium">Loading settings...</span>
+        <span className="text-gray-500 text-sm font-medium">
+          Loading settings...
+        </span>
       </div>
     );
   }
 
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-8 space-y-8 font-ceramon text-slate-900">
-      
-      {/* Header */}
-      <div className="flex justify-between items-end border-b border-gray-200 pb-4">
-        <div>
-          <h1 className="text-3xl font-bold font-ceramon text-slate-900">Weekly Schedule</h1>
-          <p className="text-slate-500 mt-1">Manage your profile details and availability.</p>
-        </div>
-        <button 
-          onClick={handleRefresh} 
-          disabled={refreshing}
-          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all disabled:opacity-50"
-          title="Refresh Data"
-        >
-          <RefreshCw className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`} />
-        </button>
-      </div>
+      <SettingsHeader
+        title="Dentist Settings"
+        subtitle="Manage your profile details and availability."
+        icon={<Calendar size={22} />}
+        action={
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all disabled:opacity-50"
+            title="Refresh Data"
+          >
+            <RefreshCw
+              className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
+            />
+          </button>
+        }
+      />
 
-      
-
-      {/* Schedule Management Section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white sticky top-0 z-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
-              <Calendar size={20} />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-slate-800">Weekly Schedule</h2>
-              <p className="text-xs text-slate-500">Define your availability slots.</p>
-            </div>
-          </div>
-          
+      <SettingsSection
+        title="Weekly Schedule"
+        description="Define your availability slots."
+        icon={<Calendar size={20} />}
+        action={
           <button
             onClick={handleAddSchedule}
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-200 active:scale-95"
@@ -240,50 +274,78 @@ export function SettingsPane() {
             <Plus className="w-4 h-4" />
             Add Availability
           </button>
-        </div>
-
-        <div className="p-6 bg-slate-50/30 min-h-[300px]">
+        }
+        footer={
+          schedules.length > 0 ? (
+            <button
+              onClick={handleSaveChanges}
+              className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-black transition-all shadow-lg active:scale-95"
+            >
+              <Save className="w-4 h-4" />
+              Save Configuration
+            </button>
+          ) : null
+        }
+      >
+        <div className="min-h-[300px]">
           {schedules.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-48 text-center border-2 border-dashed border-slate-200 rounded-xl">
               <Calendar className="w-10 h-10 text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium">No schedules configured.</p>
-              <p className="text-xs text-slate-400">Click "Add Availability" to get started.</p>
+              <p className="text-slate-500 font-medium">
+                No schedules configured.
+              </p>
+              <p className="text-xs text-slate-400">
+                Click "Add Availability" to get started.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6">
               {schedules.map((sched, dayIndex) => (
-                <div key={dayIndex} className="bg-white rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-indigo-100 group">
-                  
-                  {/* Card Header: Day Selector */}
+                <div
+                  key={dayIndex}
+                  className="bg-white rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-indigo-100 group"
+                >
                   <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 rounded-t-xl">
                     <div className="flex items-center gap-3">
                       <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
                       <select
                         value={sched.day_of_week}
-                        onChange={(e) => handleEditDay(dayIndex, e.target.value)}
+                        onChange={(e) =>
+                          handleEditDay(dayIndex, e.target.value)
+                        }
                         className="bg-transparent font-bold text-slate-700 focus:outline-none focus:ring-0 cursor-pointer hover:text-indigo-600 transition-colors"
                       >
-                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                          <option 
-                            key={day} 
+                        {[
+                          "Monday",
+                          "Tuesday",
+                          "Wednesday",
+                          "Thursday",
+                          "Friday",
+                          "Saturday",
+                          "Sunday",
+                        ].map((day) => (
+                          <option
+                            key={day}
                             value={day}
-                            disabled={schedules.some((s, i) => i !== dayIndex && s.day_of_week === day)}
+                            disabled={schedules.some(
+                              (s, i) => i !== dayIndex && s.day_of_week === day,
+                            )}
                           >
                             {day}
                           </option>
                         ))}
                       </select>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
+                      <button
                         onClick={() => handleAddTimeSlot(dayIndex)}
                         className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                         title="Add Time Slot"
                       >
                         <Plus size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDeleteSchedule(dayIndex)}
                         className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                         title="Remove Day"
@@ -293,68 +355,110 @@ export function SettingsPane() {
                     </div>
                   </div>
 
-                  {/* Time Slots Grid */}
-                  <div className="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {sched.time_slots?.map((timeSlot: any, timeIndex: number) => (
-                      <div key={timeSlot.id} className="relative flex items-center">
-                        <div className="absolute left-3 text-slate-400 pointer-events-none">
-                          <Clock size={14} />
-                        </div>
-                        <input
-                          type="text"
-                          value={timeSlot.time}
-                          onChange={(e) => handleEditTimeSlot(dayIndex, timeIndex, e.target.value)}
-                          className="w-full pl-9 pr-8 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-300"
-                          placeholder="09:00-10:00"
-                        />
-                        <button
-                          onClick={() => handleDeleteTimeSlot(dayIndex, timeIndex)}
-                          className="absolute right-2 p-1 text-slate-300 hover:text-rose-500 transition-colors"
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ))}
+                  {/* START OF REPLACED TIME INPUT SECTION */}
+                  <div className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sched.time_slots?.map(
+                      (timeSlot: any, timeIndex: number) => {
+                        // Split the "09:00-10:00" string into start and end times
+                        const [startTime = "09:00", endTime = "10:00"] = (
+                          timeSlot.time || ""
+                        ).split("-");
+
+                        return (
+                          <div
+                            key={timeSlot.id}
+                            className="relative flex items-center bg-white border border-slate-200 rounded-lg focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition-all shadow-sm h-10"
+                          >
+                            <div className="absolute left-3 text-slate-400 pointer-events-none">
+                              <Clock size={14} />
+                            </div>
+
+                            {/* Time Inputs Wrapper */}
+                            <div className="flex items-center justify-center w-full pl-8 pr-8 py-1.5">
+                              {/* Start Time */}
+                              <select
+                                value={startTime.trim()}
+                                onChange={(e) =>
+                                  handleEditTimeSlot(
+                                    dayIndex,
+                                    timeIndex,
+                                    `${e.target.value}-${endTime.trim()}`,
+                                  )
+                                }
+                                className="w-20 bg-transparent text-sm font-medium text-slate-700 border-none p-0 focus:ring-0 outline-none cursor-pointer text-center text-center-last"
+                                required
+                              >
+                                {TIME_OPTIONS.map((t) => (
+                                  <option key={t} value={t}>
+                                    {t}
+                                  </option>
+                                ))}
+                              </select>
+
+                              <span className="text-slate-300 font-normal px-1 text-xs">
+                                -
+                              </span>
+
+                              {/* End Time */}
+                              <select
+                                value={endTime.trim()}
+                                onChange={(e) =>
+                                  handleEditTimeSlot(
+                                    dayIndex,
+                                    timeIndex,
+                                    `${startTime.trim()}-${e.target.value}`,
+                                  )
+                                }
+                                className="w-20 bg-transparent text-sm font-medium text-slate-700 border-none p-0 focus:ring-0 outline-none cursor-pointer text-center text-center-last"
+                                required
+                              >
+                                {TIME_OPTIONS.map((t) => (
+                                  <option key={t} value={t}>
+                                    {t}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <button
+                              onClick={() =>
+                                handleDeleteTimeSlot(dayIndex, timeIndex)
+                              }
+                              className="absolute right-2 p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-md transition-colors"
+                              title="Remove slot"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        );
+                      },
+                    )}
+
                     <button
-                        onClick={() => handleAddTimeSlot(dayIndex)}
-                        className="flex items-center justify-center gap-2 py-2 text-sm font-medium text-slate-400 border border-dashed border-slate-300 rounded-lg hover:border-indigo-300 hover:text-indigo-500 hover:bg-indigo-50/50 transition-all"
+                      onClick={() => handleAddTimeSlot(dayIndex)}
+                      className="flex items-center justify-center gap-2 py-2 text-sm font-medium text-slate-400 border border-dashed border-slate-300 rounded-lg hover:border-indigo-300 hover:text-indigo-500 hover:bg-indigo-50/50 transition-all h-10"
                     >
-                        <Plus size={14} /> Add Slot
+                      <Plus size={14} /> Add Slot
                     </button>
                   </div>
+                  {/* END OF REPLACED TIME INPUT SECTION */}
                 </div>
               ))}
             </div>
           )}
         </div>
-
-        {/* Save Footer */}
-        {schedules.length > 0 && (
-          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-            <button
-              onClick={handleSaveChanges}
-              className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-black transition-all shadow-lg active:scale-95"
-            >
-              <Save className="w-4 h-4" />
-              Save Configuration
-            </button>
-          </div>
-        )}
-      </div>
+      </SettingsSection>
 
       {/* Additional Settings Component */}
-      <SettingsService /> 
-      
-      
-      <Alert 
-                      isOpen={alert.show} 
-                      type={alert.type}
-                      title={alert.title}
-                      message={alert.message}
-                      onClose={() => setAlert({ ...alert, show: false })} 
-                    />
-        
+      <SettingsService />
 
+      <Alert
+        isOpen={alert.show}
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ ...alert, show: false })}
+      />
     </div>
   );
 }
