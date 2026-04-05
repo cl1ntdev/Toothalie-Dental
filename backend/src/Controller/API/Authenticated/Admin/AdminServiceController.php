@@ -13,6 +13,26 @@ final class AdminServiceController extends AbstractController
 {
     public function __construct(private ActivityLogger $logger) {}
 
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[
         Route(
             "/api/admin/services",
@@ -22,6 +42,11 @@ final class AdminServiceController extends AbstractController
     ]
     public function listServices(Connection $connection): JsonResponse
     {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $data = $connection->fetchAllAssociative(
             "SELECT s.id as id, s.name as name, s.service_type_id, st.name as service_type_name
              FROM service s
@@ -42,6 +67,11 @@ final class AdminServiceController extends AbstractController
         Request $request,
         Connection $connection,
     ): JsonResponse {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $payload = json_decode($request->getContent(), true);
         $name = $payload["name"] ?? null;
         $serviceTypeId = $payload["service_type_id"] ?? null;
@@ -80,6 +110,11 @@ final class AdminServiceController extends AbstractController
         Request $request,
         Connection $connection,
     ): JsonResponse {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $payload = json_decode($request->getContent(), true);
         $id = $payload["id"] ?? null;
         $name = $payload["name"] ?? null;
@@ -118,6 +153,11 @@ final class AdminServiceController extends AbstractController
         Request $request,
         Connection $connection,
     ): JsonResponse {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $payload = json_decode($request->getContent(), true);
         $id = $payload["id"] ?? null;
 

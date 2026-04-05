@@ -23,6 +23,13 @@ class AppointmentDetails extends AbstractController
             }
 
             $userID = $user->getId();
+            $userRole = $user->getRoles();
+            if (!in_array('ROLE_PATIENT', $userRole)) {
+                return new JsonResponse([
+                    'status' => 'error',
+                    'message' => 'Forbidden'
+                ], 403);
+            }
 
             $appointments = $connection->fetchAllAssociative(
                 "SELECT a.*,s.name as service_name, r.id AS reminder_id, r.information AS reminder_info, r.viewed AS reminder_viewed

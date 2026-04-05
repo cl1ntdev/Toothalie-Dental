@@ -241,7 +241,7 @@ export default function Dentist() {
           <AppointmentModal
             onClose={() => setIsModalOpen(false)}
             appointmentSuccess={() => alert("siccess")} 
-            operatorPhone="static phone number"
+            operatorPhone=""
             isStatic={true}
           />
         )}

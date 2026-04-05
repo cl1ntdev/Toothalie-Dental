@@ -11,6 +11,26 @@ use App\Service\ActivityLogger;
 
 class Appointment extends AbstractController
 {
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[
         Route(
             "/api/admin/appointments",
@@ -23,6 +43,11 @@ class Appointment extends AbstractController
         Connection $connection,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $appointments = $connection->fetchAllAssociative('
                 SELECT
                     a.id,
@@ -108,6 +133,11 @@ class Appointment extends AbstractController
         Connection $connection,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $appointment = $connection->fetchAssociative(
                 "SELECT * FROM appointment WHERE id = ?",
                 [$id],
@@ -140,6 +170,11 @@ class Appointment extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
             $required = ["patient_id", "dentist_id", "schedule_id"];
             foreach ($required as $field) {
@@ -167,7 +202,7 @@ class Appointment extends AbstractController
                 "service_id" => isset($data["service_id"])
                     ? (int) $data["service_id"]
                     : null,
-                "appointment_date" => new \DateTime()->format("Y-m-d H:i:s"),
+                "appointment_date" => (new \DateTime())->format("Y-m-d H:i:s"),
             ];
 
             if (!empty($insertData["service_id"])) {
@@ -219,6 +254,11 @@ class Appointment extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             $appointmentID = (int) $id;
@@ -322,6 +362,11 @@ class Appointment extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $appointment = $connection->fetchAssociative(
                 "SELECT * FROM appointment WHERE id = ?",
                 [$id],

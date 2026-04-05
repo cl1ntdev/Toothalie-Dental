@@ -337,7 +337,7 @@ export default function Hero() {
         <AppointmentModal
           onClose={() => setIsModalOpen(false)}
           appointmentSuccess={() => alert("siccess")} 
-          operatorPhone="static phone number"
+          operatorPhone=""
           isStatic={true}
         />
       )}

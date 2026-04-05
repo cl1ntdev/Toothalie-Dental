@@ -29,6 +29,18 @@ class UpdateAppointment extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            // authenticated user
+            $user = $this->getUser();
+            $userRole = $user->getRoles();
+            if (!in_array("ROLE_PATIENT", $userRole)) {
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Forbidden",
+                    ],
+                    403,
+                );
+            }
             $data = json_decode($req->getContent(), true);
             $appointmentID = $data["appointmentID"] ?? null;
             $scheduleID = $data["scheduleID"] ?? null;

@@ -11,6 +11,26 @@ use App\Service\ActivityLogger;
 
 class Reminder extends AbstractController
 {
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[
         Route(
             "/api/admin/get-reminders",
@@ -23,6 +43,11 @@ class Reminder extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $reminders = $connection->fetchAllAssociative(
                 "SELECT * from reminder",
             );
@@ -61,6 +86,11 @@ class Reminder extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
             $reminderID = $data["reminderID"] ?? null;
 
@@ -110,6 +140,11 @@ class Reminder extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!isset($data["reminderID"])) {
@@ -191,6 +226,11 @@ class Reminder extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!$data || !isset($data["reminderID"])) {
@@ -297,6 +337,11 @@ class Reminder extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             // Validate required fields

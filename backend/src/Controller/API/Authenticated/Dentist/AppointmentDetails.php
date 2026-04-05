@@ -33,6 +33,13 @@ class AppointmentDetails extends AbstractController
                     400,
                 );
             }
+            $userRole = $user->getRoles();
+            if (!in_array('ROLE_DENTIST', $userRole)) {
+                return new JsonResponse([
+                    'status' => 'error',
+                    'message' => 'Forbidden'
+                ], 403);
+            }
 
             //Fetch all appointments assigned to this dentist
             $appointments = $connection->fetchAllAssociative(

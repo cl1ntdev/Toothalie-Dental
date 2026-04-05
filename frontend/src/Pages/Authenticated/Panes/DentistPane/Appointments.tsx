@@ -44,6 +44,34 @@ interface ReminderDay {
   slots: ReminderSlot[];
 }
 
+const TIME_INTERVAL_MINUTES = 30;
+
+const getLocalDateString = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const timeToMinutes = (time: string) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+const formatMinutesAsTime = (totalMinutes: number) => {
+  const hours = String(Math.floor(totalMinutes / 60)).padStart(2, "0");
+  const minutes = String(totalMinutes % 60).padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
+
+const generateTimeOptions = () => {
+  const options: string[] = [];
+  for (let mins = 0; mins < 24 * 60; mins += TIME_INTERVAL_MINUTES) {
+    options.push(formatMinutesAsTime(mins));
+  }
+  return options;
+};
+
 export default function Appointments() {
   const [dentistID, setDentistID] = useState<string>("");
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
@@ -59,6 +87,8 @@ export default function Appointments() {
   // --- New Reminder Schedule State ---
   const [reminderSchedule, setReminderSchedule] = useState<ReminderDay[]>([]);
   const [isSavingReminder, setIsSavingReminder] = useState(false);
+  const [todayDate] = useState(getLocalDateString());
+  const [timeOptions] = useState(generateTimeOptions());
   const [alert, setAlert] = useState({ 
        show: false, 
        type: "info", 
@@ -119,7 +149,7 @@ export default function Appointments() {
 
   // --- Handlers ---
 
-  const handleMode = async (mode: string) => {
+  const handleMode = async (mode: "details" | "reminder") => {
     if (!viewAppointment) return;
   
     try {
@@ -160,7 +190,12 @@ export default function Appointments() {
       setModalMode(mode);
     } catch (error) {
       console.error("Failed to fetch reminders:", error);
-      alert("Failed to load reminders. Please try again.");
+      setAlert({
+        show: true,
+        type: "error",
+        title: "Load Failed",
+        message: "Failed to load reminders. Please try again.",
+      });
     }
   };
 
@@ -212,7 +247,12 @@ export default function Appointments() {
       }
     } catch (err) {
       console.error("Error updating appointment:", err);
-      alert("Error updating appointment. Please try again.");
+      setAlert({
+        show: true,
+        type: "error",
+        title: "Update Failed",
+        message: "Error updating appointment. Please try again.",
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -238,6 +278,16 @@ export default function Appointments() {
   };
 
   const updateDayDate = (dayId: string, newDate: string) => {
+    if (newDate && newDate < todayDate) {
+      setAlert({
+        show: true,
+        type: "warning",
+        title: "Invalid Date",
+        message: "You cannot select a past date.",
+      });
+      return;
+    }
+
     setReminderSchedule(reminderSchedule.map(d => 
       d.id === dayId ? { ...d, date: newDate } : d
     ));
@@ -283,14 +333,34 @@ export default function Appointments() {
         if (d.id !== dayId) return d;
   
         const updatedSlots = [...d.slots];
-        updatedSlots[slotIndex] = {
+        const nextSlot = {
           ...updatedSlots[slotIndex],
           [field]: value,
         };
+
+        if (field === "startTime" && nextSlot.endTime) {
+          const startMinutes = timeToMinutes(nextSlot.startTime);
+          const endMinutes = timeToMinutes(nextSlot.endTime);
+          if (endMinutes <= startMinutes) {
+            const nextEndMinutes = startMinutes + TIME_INTERVAL_MINUTES;
+            nextSlot.endTime =
+              nextEndMinutes < 24 * 60
+                ? formatMinutesAsTime(nextEndMinutes)
+                : "";
+          }
+        }
+
+        updatedSlots[slotIndex] = nextSlot;
   
         return { ...d, slots: updatedSlots };
       })
     );
+  };
+
+  const getEndTimeOptions = (startTime: string) => {
+    if (!startTime) return [];
+    const startMinutes = timeToMinutes(startTime);
+    return timeOptions.filter((time) => timeToMinutes(time) > startMinutes);
   };
 
 
@@ -298,6 +368,16 @@ export default function Appointments() {
     // Basic Validation
     const isValid = reminderSchedule.every(day => 
       day.date && day.slots.every(slot => slot.startTime && slot.endTime && slot.message)
+    );
+
+    const hasPastDate = reminderSchedule.some((day) => day.date < todayDate);
+    const hasInvalidRange = reminderSchedule.some((day) =>
+      day.slots.some(
+        (slot) =>
+          !!slot.startTime &&
+          !!slot.endTime &&
+          timeToMinutes(slot.endTime) <= timeToMinutes(slot.startTime)
+      )
     );
 
     if(!isValid || reminderSchedule.length === 0) {
@@ -308,6 +388,26 @@ export default function Appointments() {
                message: `Please fill up necessary requirements`
              });
         return 
+    }
+
+    if (hasPastDate) {
+      setAlert({
+        show: true,
+        type: "error",
+        title: "Invalid Date",
+        message: "One or more reminder dates are in the past.",
+      });
+      return;
+    }
+
+    if (hasInvalidRange) {
+      setAlert({
+        show: true,
+        type: "error",
+        title: "Invalid Time Range",
+        message: "End time must be later than start time.",
+      });
+      return;
     }
     
     try {
@@ -713,6 +813,7 @@ export default function Appointments() {
                                                       type="date"
                                                       value={day.date}
                                                       onChange={(e) => updateDayDate(day.id, e.target.value)}
+                                                      min={todayDate}
                                                       className="bg-transparent border-none p-0 focus:ring-0 text-gray-700 cursor-pointer text-sm font-medium"
                                                   />
                                               </div>
@@ -752,12 +853,16 @@ export default function Appointments() {
                                                         {/* Start Time */}
                                                         <div className="relative flex items-center pl-3">
                                                             <Clock className="h-4 w-4 text-gray-400 group-focus-within/slot:text-blue-500 transition-colors" />
-                                                            <input
-                                                                type="time"
+                                                          <select
                                                                 value={slot.startTime}
                                                                 onChange={(e) => updateTimeSlot(day.id, slotIndex, "startTime", e.target.value)}
-                                                                className="pl-2 pr-1 py-2 bg-transparent border-none text-sm font-semibold text-gray-700 focus:ring-0 cursor-pointer w-[110px] [color-scheme:light]" 
-                                                            />
+                                                            className="pl-2 pr-1 py-2 bg-transparent border-none text-sm font-semibold text-gray-700 focus:ring-0 cursor-pointer w-[120px]"
+                                                          >
+                                                            <option value="">Start</option>
+                                                            {timeOptions.map((time) => (
+                                                              <option key={time} value={time}>{time}</option>
+                                                            ))}
+                                                          </select>
                                                         </div>
                                                 
                                                         {/* Divider */}
@@ -765,12 +870,17 @@ export default function Appointments() {
                                                 
                                                         {/* End Time */}
                                                         <div className="relative flex items-center pr-1">
-                                                            <input
-                                                                type="time"
+                                                          <select
                                                                 value={slot.endTime}
                                                                 onChange={(e) => updateTimeSlot(day.id, slotIndex, "endTime", e.target.value)}
-                                                                className="pl-3 pr-1 py-2 bg-transparent border-none text-sm font-medium text-gray-600 focus:ring-0 cursor-pointer w-[105px] [color-scheme:light]"
-                                                            />
+                                                            disabled={!slot.startTime}
+                                                            className="pl-3 pr-1 py-2 bg-transparent border-none text-sm font-medium text-gray-600 focus:ring-0 cursor-pointer w-[120px] disabled:text-gray-300"
+                                                          >
+                                                            <option value="">End</option>
+                                                            {getEndTimeOptions(slot.startTime).map((time) => (
+                                                              <option key={time} value={time}>{time}</option>
+                                                            ))}
+                                                          </select>
                                                         </div>
                                                         
                                                         {/* Helper Label (Optional - shows "to" on hover for clarity) */}

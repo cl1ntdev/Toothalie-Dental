@@ -12,10 +12,35 @@ use App\Service\ActivityLogger;
 
 class AppUser extends AbstractController
 {
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[Route("/api/admin/get-users", name: "get-users", methods: ["GET"])]
     public function getUsers(Request $req, Connection $connection): JsonResponse
     {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $users = $connection->fetchAllAssociative("SELECT * from user");
 
             return new JsonResponse([
@@ -38,6 +63,11 @@ class AppUser extends AbstractController
         Connection $connection,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
             $userID = $data["userID"] ?? null;
 
@@ -77,6 +107,11 @@ class AppUser extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!isset($data["userID"])) {
@@ -140,6 +175,11 @@ class AppUser extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!$data || !isset($data["userID"])) {
@@ -243,6 +283,11 @@ class AppUser extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             // Validate required fields
@@ -312,7 +357,7 @@ class AppUser extends AbstractController
                 "is_verified" => isset($data["is_verified"])
                     ? (int) $data["is_verified"]
                     : 0,
-                "created_at" => new \DateTime()->format("Y-m-d H:i:s"),
+                "created_at" => (new \DateTime())->format("Y-m-d H:i:s"),
             ];
 
             // Insert into database

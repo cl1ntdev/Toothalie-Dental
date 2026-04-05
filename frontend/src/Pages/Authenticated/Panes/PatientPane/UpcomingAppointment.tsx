@@ -54,6 +54,7 @@ export default function UpcomingAppointment() {
         setLoading(true);
         const data = await FetchAppointment();
         if (data && data.status === 'ok' && Array.isArray(data.appointments)) {
+          console.log('Fetched Appointments:', data.appointments);
           setAppointmentsData(data.appointments);
         } else {
           setAppointmentsData([]);
@@ -265,7 +266,7 @@ export default function UpcomingAppointment() {
                     <div className="flex items-center gap-4 text-sm text-slate-600 bg-slate-50/50 p-3 rounded-xl border border-slate-50">
                         <div className="flex items-center gap-2">
                             <Clock size={16} className="text-indigo-500" />
-                            <span className="font-medium">{appointment?.appointment_date || 'Time TBD'}</span>
+                            <span className="font-medium">{appointment?.user_set_date || 'Time TBD'}</span>
                         </div>
                         <div className="w-px h-4 bg-slate-200"></div>
                         <div className="flex items-center gap-2 text-slate-500">

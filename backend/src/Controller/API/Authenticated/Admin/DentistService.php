@@ -11,6 +11,26 @@ use App\Service\ActivityLogger;
 
 class DentistService extends AbstractController
 {
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[
         Route(
             "/api/admin/get-dentist-services",
@@ -21,6 +41,11 @@ class DentistService extends AbstractController
     public function getDentistServices(Connection $connection): JsonResponse
     {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $dentistServices = $connection->fetchAllAssociative(
                 'SELECT ds.id, ds.user_id, ds.service_id,
                         u.first_name as dentist_first_name, u.last_name as dentist_last_name,
@@ -57,6 +82,11 @@ class DentistService extends AbstractController
         Connection $connection,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
             $dentistServiceID = $data["dentistServiceID"];
 
@@ -99,6 +129,11 @@ class DentistService extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!isset($data["dentistServiceID"])) {
@@ -165,6 +200,11 @@ class DentistService extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!$data || !isset($data["dentistServiceID"])) {
@@ -244,6 +284,11 @@ class DentistService extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             $required = ["user_id", "service_id"];

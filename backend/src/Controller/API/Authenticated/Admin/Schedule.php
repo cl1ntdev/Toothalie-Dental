@@ -11,6 +11,26 @@ use App\Service\ActivityLogger;
 
 class Schedule extends AbstractController
 {
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[
         Route(
             "/api/admin/get-schedules",
@@ -21,6 +41,11 @@ class Schedule extends AbstractController
     public function getSchedules(Connection $connection): JsonResponse
     {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $schedules = $connection->fetchAllAssociative(
                 'SELECT s.id, s.day_of_week, s.time_slot, s.dentistID,
                         u.first_name as dentist_first_name, u.last_name as dentist_last_name
@@ -48,6 +73,11 @@ class Schedule extends AbstractController
         Connection $connection,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
             $scheduleID = $data["id"];
 
@@ -87,6 +117,11 @@ class Schedule extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!isset($data["id"])) {
@@ -146,6 +181,11 @@ class Schedule extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             if (!$data || !isset($data["id"])) {
@@ -234,6 +274,11 @@ class Schedule extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $data = json_decode($req->getContent(), true);
 
             $required = ["day_of_week", "time_slot", "dentistID"];

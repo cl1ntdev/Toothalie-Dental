@@ -31,7 +31,7 @@ export default function ViewAppointmentModal({ appointmentData, onClose }: ViewM
   if (!appointmentData) return null;
 
   const { appointment, dentist, schedules } = appointmentData;
-  const schedule = schedules.find((s: any) => s.scheduleID === appointment.schedule_id);
+  const schedule = schedules.find((s: any) => s.id === appointment.schedule_id);
 
   // --- Helper: Format Time to AM/PM ---
   const formatTime = (timeString: string) => {

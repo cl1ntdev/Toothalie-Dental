@@ -20,6 +20,18 @@ class Reminder extends AbstractController
         date_default_timezone_set("Asia/Manila");
 
         try {
+            $user = $this->getUser();
+            $userRole = $user->getRoles();
+            if (!in_array("ROLE_DENTIST", $userRole)) {
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Forbidden",
+                    ],
+                    403,
+                );
+            }
+
             $data = json_decode($req->getContent(), true);
 
             $payload = $data["payload"] ?? null;
@@ -103,6 +115,17 @@ class Reminder extends AbstractController
         ActivityLogger $logger,
     ): JsonResponse {
         try {
+            $user = $this->getUser();
+            $userRole = $user->getRoles();
+            if (!in_array("ROLE_DENTIST", $userRole)) {
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Forbidden",
+                    ],
+                    403,
+                );
+            }
             $data = json_decode($req->getContent(), true);
             $appointmentID = $data["id"] ?? null;
 
@@ -163,7 +186,14 @@ class Reminder extends AbstractController
             $data = json_decode($req->getContent(), true);
             $appointmentID = $data["id"] ?? null;
             $payload = $data["payload"] ?? null;
-
+            $user = $this->getUser();
+            $userRole = $user->getRoles();
+            if (!in_array('ROLE_DENTIST', $userRole)) {
+                return new JsonResponse([
+                    'status' => 'error',
+                    'message' => 'Forbidden'
+                ], 403);
+            }
             if (!$appointmentID || !$payload) {
                 return new JsonResponse(
                     [

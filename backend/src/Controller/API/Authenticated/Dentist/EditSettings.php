@@ -30,7 +30,13 @@ class EditSettings extends AbstractController
 
             $data = json_decode($req->getContent(), true);
             $schedules = $data["schedules"];
-
+            $userRole = $user->getRoles();
+            if (!in_array('ROLE_DENTIST', $userRole)) {
+                return new JsonResponse([
+                    'status' => 'error',
+                    'message' => 'Forbidden'
+                ], 403);
+            }
             if ($schedules === null) {
                 return new JsonResponse(
                     ["status" => "error", "message" => "Invalid JSON payload"],
@@ -72,9 +78,9 @@ class EditSettings extends AbstractController
                 $userRoles = json_decode($user["roles"], true);
             }
 
-            $userRoles = array_map("strtolower", $userRoles);
+            $userRoles = array_map("strtoupper", $userRoles);
 
-            if (!in_array("role_dentist", $userRoles)) {
+            if (!in_array("ROLE_DENTIST", $userRoles)) {
                 return new JsonResponse(
                     [
                         "status" => "error",
@@ -227,7 +233,13 @@ class EditSettings extends AbstractController
         $user = $this->getUser();
         $userID = $user->getId();
         $data = json_decode($request->getContent(), true);
-
+        $userRole = $user->getRoles();
+        if (!in_array('ROLE_DENTIST', $userRole)) {
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => 'Forbidden'
+            ], 403);
+        }
         if (!$data || !isset($data["payload"])) {
             return new JsonResponse(["error" => "Invalid request"], 400);
         }

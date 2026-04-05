@@ -143,15 +143,15 @@ export default function AppointmentStepOne({
                       </div>
                     </div>
 
-                    {operatorPhoneHref && (
+                    {/*{operatorPhoneHref && (
                       <a
                         href={operatorPhoneHref}
-                        className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20 active:scale-95"
+                        className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-blue-100 text-blue-900 text-base font-black hover:bg-blue-200 transition-all border-2 border-blue-200 active:scale-95"
                       >
-                        <Phone className="w-4 h-4 fill-current" />
-                        Call Now
+                        <Phone className="w-5 h-5 fill-blue-900" />
+                        <span>CALL NOW</span>
                       </a>
-                    )}
+                    )}*/}
                   </div>
                 </div>
               </motion.div>

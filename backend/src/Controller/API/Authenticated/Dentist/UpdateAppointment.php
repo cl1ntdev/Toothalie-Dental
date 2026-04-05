@@ -25,6 +25,18 @@ class UpdateAppointment extends AbstractController
     ): JsonResponse {
         date_default_timezone_set("Asia/Manila");
         try {
+            $user = $this->getUser();
+            $userRole = $user->getRoles();
+            if (!in_array("ROLE_DENTIST", $userRole)) {
+                return new JsonResponse(
+                    [
+                        "status" => "error",
+                        "message" => "Forbidden",
+                    ],
+                    403,
+                );
+            }
+
             $data = json_decode($req->getContent(), true);
             $appointmentID = $data["id"] ?? null;
             $status = $data["status"] ?? null;

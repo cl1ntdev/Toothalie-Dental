@@ -13,9 +13,34 @@ final class AdminRoleController extends AbstractController
 {
     public function __construct(private ActivityLogger $logger) {}
 
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[Route("/api/admin/roles", methods: ["GET"], name: "admin_get_roles")]
     public function list(Connection $connection): JsonResponse
     {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $data = $connection->fetchAllAssociative(
             "SELECT id, role_name FROM role",
         );
@@ -33,6 +58,11 @@ final class AdminRoleController extends AbstractController
         Request $request,
         Connection $connection,
     ): JsonResponse {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $payload = json_decode($request->getContent(), true);
         $name = $payload["name"] ?? null;
         if (!$name) {
@@ -65,6 +95,11 @@ final class AdminRoleController extends AbstractController
         Request $request,
         Connection $connection,
     ): JsonResponse {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $p = json_decode($request->getContent(), true);
         $id = $p["id"] ?? null;
         $name = $p["name"] ?? null;
@@ -97,6 +132,11 @@ final class AdminRoleController extends AbstractController
         Request $request,
         Connection $connection,
     ): JsonResponse {
+        $authError = $this->denyUnlessAdmin();
+        if ($authError) {
+            return $authError;
+        }
+
         $p = json_decode($request->getContent(), true);
         $id = $p["id"] ?? null;
         if (!$id) {

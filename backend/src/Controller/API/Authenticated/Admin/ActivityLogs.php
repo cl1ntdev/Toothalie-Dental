@@ -11,10 +11,35 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 class ActivityLogs extends AbstractController
 {
+    private function denyUnlessAdmin(): ?JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Unauthorized",
+            ], 401);
+        }
+
+        if (!in_array("ROLE_ADMIN", $user->getRoles(), true)) {
+            return new JsonResponse([
+                "status" => "error",
+                "message" => "Forbidden",
+            ], 403);
+        }
+
+        return null;
+    }
+
     #[Route('/api/admin/activity-logs', name: "get-activity-logs", methods: ['GET'])]
     public function getActivityLogs(Request $req, Connection $connection): JsonResponse
     {
         try {
+            $authError = $this->denyUnlessAdmin();
+            if ($authError) {
+                return $authError;
+            }
+
             $userId = $req->query->get('userId');
             $action = $req->query->get('action');
             $dateFrom = $req->query->get('dateFrom');
