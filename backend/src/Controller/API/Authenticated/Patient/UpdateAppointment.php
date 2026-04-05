@@ -94,7 +94,7 @@ class UpdateAppointment extends AbstractController
             );
 
             $connection->insert("appointment_log", [
-                "id" => $appointmentID,
+                // "id" => $appointmentID,
                 "actor_type" => "patient",
                 "action" => "update",
                 "message" => "Updated appointment details.",

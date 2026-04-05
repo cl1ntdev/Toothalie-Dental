@@ -54,7 +54,7 @@ type AppointmentProps = {
   onClose: () => void;
   appointmentSuccess: () => void;
   operatorPhone?: string;
-  isStatic: boolean;
+  isStatic?: boolean;
 };
 
 export default function AppointmentModal({
@@ -269,9 +269,9 @@ export default function AppointmentModal({
   const canSubmit =
     canContinue &&
     !!selectedAppointmentTypeId &&
-    contactFirstName.trim() &&
-    contactLastName.trim() &&
-    contactEmail.trim();
+    !!contactFirstName.trim() &&
+    !!contactLastName.trim() &&
+    !!contactEmail.trim();
 
   const handleSubmit = async () => {
     if (!canSubmit || !selectedAppointmentTypeId) {
@@ -358,8 +358,8 @@ export default function AppointmentModal({
               onSelectService={(service) => {
                 setSelectService({
                   serviceTypeName: service.serviceTypeName,
-                  serviceID: service.service_id ?? service.serviceID,
-                  serviceName: service.service_name ?? service.serviceName,
+                  serviceID: service.service_id,
+                  serviceName: service.service_name,
                 });
               }}
               loading={loading}

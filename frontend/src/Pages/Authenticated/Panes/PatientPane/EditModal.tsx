@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/popover";
 
 type EditModalProps = {
-  appointmentID: string | null;
+  appointmentID: string | number | null;
   onClose: () => void;
   onSuccessEdit: () => void;
 };
@@ -48,6 +48,7 @@ export default function EditModal({
   onSuccessEdit,
   appointmentID,
 }: EditModalProps) {
+  console.log("edit modal is here",appointmentID)
   const [loading, setLoading] = useState(true);
   const [appointmentInfo, setAppointmentInfo] = useState<any>(null);
   
@@ -67,7 +68,7 @@ export default function EditModal({
       try {
         setLoading(true);
         if (!appointmentID) return;
-        const data = await FetchEditAppointmentDetailsAPI(appointmentID);
+        const data = await FetchEditAppointmentDetailsAPI(String(appointmentID));
         
         setDate(new Date(data.appointment.user_set_date));
         setDay(data.appointment.day_of_week);
@@ -112,7 +113,7 @@ export default function EditModal({
   const handleSave = async () => {
     try {
       const res = await UpdateAppointment(
-        appointmentID,
+        String(appointmentID),
         selectedSchedule,
         date,
         isEmergency,
