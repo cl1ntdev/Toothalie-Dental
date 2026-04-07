@@ -196,13 +196,13 @@ export default function Hero() {
                   <div className="text-3xl md:text-4xl font-extrabold text-gray-800 font-['Plus_Jakarta_Sans'] flex items-baseline tracking-tight">
                     <CountUp
                       from={0}
-                      to={15}
+                      to={1500}
                       separator=","
                       direction="up"
                       duration={2.5}
                       startCounting={true}
                     />
-                    <span className="text-blue-600 ml-1">k+</span>
+                    <span className="text-blue-600 ml-1">+</span>
                   </div>
                 </div>
                 <p className="text-xs md:text-sm text-gray-500 font-semibold uppercase tracking-wider mt-1">

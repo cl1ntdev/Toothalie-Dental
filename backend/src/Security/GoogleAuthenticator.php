@@ -4,6 +4,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Service\EmailVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
@@ -24,6 +25,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
         private ClientRegistry $clientRegistry,
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $jwtManager,
+        private EmailVerificationService $emailVerificationService,
     ) {}
 
     public function supports(Request $request): ?bool
@@ -85,14 +87,33 @@ class GoogleAuthenticator extends OAuth2Authenticator
                     }
 
                     $existingUser->setCreatedAt(new \DateTimeImmutable());
-                    $existingUser->setIsVerified(true); 
+                    $existingUser->setIsVerified(true);
                     $this->entityManager->persist($existingUser);
                     $this->entityManager->flush();
                 }
 
                 if (!$existingUser->isVerified()) {
+                    // Generate verification token
+                    $verificationToken = $this->emailVerificationService->generateVerificationToken();
+                    $existingUser->setVerificationToken($verificationToken);
+                    $existingUser->setIsVerified(false);
+
+                    $this->entityManager->persist($existingUser);
+                    $this->entityManager->flush();
+
+                    // Generate verification URL
+                    $verificationUrl =
+                        "http://localhost:8000/verify-email?token=" .
+                        urlencode($verificationToken);
+
+                    // Send verification email
+                    $this->emailVerificationService->sendVerificationEmail(
+                        $existingUser,
+                        $verificationUrl,
+                    );
+
                     throw new CustomUserMessageAuthenticationException(
-                        "Your account is not verified. Please verify your email before logging in.",
+                        "Your account is not verified. A new verification email has been sent. Please verify your email before logging in.",
                     );
                 }
 

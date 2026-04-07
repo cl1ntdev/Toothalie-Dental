@@ -5,7 +5,7 @@ import TypingText from "@/components/TypingText";
 
 export default function StatsCTA() {
   const stats = [
-    { to: 25, suffix: "k+", label: "Patients Treated" },
+    { to: 1500, suffix: "+", label: "Patients Treated" },
     { to: 12, suffix: "+", label: "Years of Care" },
     { to: 99, suffix: "%", label: "Platform Rating" }, // Changed 4.9 to 99% for better CountUp visual
   ];
