@@ -174,9 +174,10 @@ export function AppSidebar({
   const handleMouseLeave = () => {
     setHoveredItem(null);
   };
-
+  const user_first_name = userInfo.firstName ?? "Guest";
+  const user_last_name = userInfo.lastName ?? "N/A"
   const displayName = userInfo
-    ? `${userInfo.firstName} ${userInfo.lastName}`
+    ? `${user_first_name} ${user_last_name}`
     : "Guest User";
   const roleChecker = userInfo?.roles?.[0]?.replace("ROLE_", "") || "GUEST";
   const role = roleChecker.includes("ADMIN")
@@ -185,7 +186,7 @@ export function AppSidebar({
       ? "Dentist"
       : "Patient";
   const initials = userInfo
-    ? `${userInfo.firstName[0]}${userInfo.lastName[0]}`.toUpperCase()
+    ? `${user_first_name[0]}${user_last_name[0]}`.toUpperCase()
     : "GU";
 
   return (
