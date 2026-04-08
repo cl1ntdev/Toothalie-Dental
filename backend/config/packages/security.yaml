@@ -58,7 +58,7 @@ security:
         - { path: ^/api/auth-user-info, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/get-login-user, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/estrellanes, roles:  }
-        - { path: ^/api, roles:  }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
         - { path: ^/api/admin, roles: ROLE_ADMIN }
 
