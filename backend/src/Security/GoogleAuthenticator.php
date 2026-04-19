@@ -19,6 +19,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class GoogleAuthenticator extends OAuth2Authenticator
 {
     public function __construct(
@@ -26,6 +27,8 @@ class GoogleAuthenticator extends OAuth2Authenticator
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $jwtManager,
         private EmailVerificationService $emailVerificationService,
+        #[Autowire("%env(SITE_BASE_URL)%")] private string $backendUrl,
+        #[Autowire("%env(FRONTEND_URL)%")] private string $frontendUrl,
     ) {}
 
     public function supports(Request $request): ?bool
@@ -103,7 +106,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
                     // Generate verification URL
                     $verificationUrl =
-                        "http://localhost:8000/verify-email?token=" .
+                        $this->backendUrl . "/verify-email?token=" .
                         urlencode($verificationToken);
 
                     // Send verification email
@@ -132,7 +135,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
         $jwtToken = $this->jwtManager->create($user);
 
         // Redirect back to the React frontend with the token in the URL parameters
-        $targetUrl = "http://localhost:5173/auth/callback?token=" . $jwtToken;
+        $targetUrl = $this->frontendUrl . "/auth/callback?token=" . $jwtToken;
 
         return new RedirectResponse($targetUrl);
     }
@@ -146,9 +149,8 @@ class GoogleAuthenticator extends OAuth2Authenticator
             $exception->getMessageData(),
         );
 
-        // Redirect back to React login page with an error
         return new RedirectResponse(
-            "http://localhost:5173/login?error=" . urlencode($message),
+            $this->frontendUrl . "/login?error=" . urlencode($message),
         );
     }
 }
