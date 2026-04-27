@@ -71,11 +71,4 @@ Staff
 
 
 ==============
-/- TESTING
-/- Dentist Dashboard
-- CLean Dentist Code
-- Clean Admin Code
-- Search and refresh appointment on dentist
-- integrate pictures?
-/- Dentist Data
-/- Dentist Setting Time
+- auto send email when admin creates an account
