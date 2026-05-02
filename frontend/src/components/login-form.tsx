@@ -140,7 +140,8 @@ export function LoginForm({
   }
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://127.0.0.1:8000/connect/google';
+    const url_base = import.meta.env.VITE_BACKEND_URL
+    window.location.href = `${url_base}/connect/google`;
   };
   
   if (isCheckingAuth) {
