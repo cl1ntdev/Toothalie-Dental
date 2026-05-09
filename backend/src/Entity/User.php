@@ -91,6 +91,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      #[ORM\Column(length: 255, nullable: true)]
      private ?string $verificationToken = null;
 
+     #[ORM\Column(length: 255, nullable: true)]
+     private ?string $fcmToken = null;
+
 
     public function __construct()
     {
@@ -283,6 +286,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerificationToken(?string $verificationToken): static
     {
         $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
+    public function getFcmToken(): ?string
+    {
+        return $this->fcmToken;
+    }
+
+    public function setFcmToken(?string $fcmToken): static
+    {
+        $this->fcmToken = $fcmToken;
 
         return $this;
     }
