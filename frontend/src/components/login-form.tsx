@@ -172,7 +172,7 @@ export function LoginForm({
              onChange={(e) => setUsername(e.target.value)} 
              id="username" 
              type="text" 
-             placeholder="johndoe" 
+             placeholder="Enter Username" 
              maxLength={20}
              required 
           />
@@ -185,6 +185,8 @@ export function LoginForm({
             onChange={(e) => setPassword(e.target.value)} 
             id="password" 
             type="password" 
+            placeholder="Enter Password" 
+    
             required 
           />
         </div>
